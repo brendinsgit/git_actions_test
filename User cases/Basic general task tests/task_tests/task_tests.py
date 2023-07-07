@@ -16,6 +16,9 @@ from selenium.common.exceptions import NoSuchElementException
 
 browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
 webdriver_path = input("Enter the path to your webdriver: ")
+username = input(
+    "Please provide your Rooms username (read QA Line document for more info): "
+)
 email_address = input("Please provide an email that can be used to log in: ")
 password = input("Please provide a password that can be used to log in: ")
 os.environ["PATH"] += os.pathsep + webdriver_path
@@ -43,17 +46,20 @@ class Task_tests:
         email_address=email_address,
         password=password,
         teardown=False,
+        username=username,
     ):
         global driver
         self.driver = driver
         self.webdriver_path = webdriver_path
         self.email_address = email_address
         self.password = password
+        self.username = username
         self.teardown = teardown
         self.room_name = "Test room"
         self.tile_name = "Kenja Tile"
         self.task_name = "Kenja task"
         self.comment_content = "Great job!"
+        self.wait = WebDriverWait(self.driver, 30)
         self.progress_value = "50%"
         self.subtask_name = "Kenja Subtask"
         os.environ["PATH"] += self.webdriver_path
@@ -67,7 +73,7 @@ class Task_tests:
         return self
 
     def login(self):
-        self.driver.get("https://kenja.rooms3.dvl/#")
+        self.driver.get("https://r3qa-3.qarooms3.kenja.com/")
         self.driver.execute_script("document.body.style.zoom='100%'")
         self.driver.maximize_window()
 
@@ -88,10 +94,23 @@ class Task_tests:
         )
 
     def create_room(self):
+        # Go into TEST dpt
+        self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
+        ).click()
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
+        ).click()
         # Find "create room" button
 
-        driver.find_element(
-            By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item"
+        # Click on the plus icon next to "Add"
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//*[contains(text(), 'Add sub room')]")
+            )
         ).click()
         # Click create room
         wait = WebDriverWait(driver, 10)
@@ -119,7 +138,7 @@ class Task_tests:
         ).click()
         print("Created room")
         # Find the header with the room name on it
-        time.sleep(1)  # TO DO: Change that... this is a very lazy fix
+        time.sleep(5)  # TO DO: Change that... this is a very lazy fix
         header_text = driver.find_element(By.CLASS_NAME, "header-bottom-room-name")
         text = header_text.text
         if text == self.room_name:
@@ -187,9 +206,9 @@ class Task_tests:
 
         driver.find_element(
             By.CSS_SELECTOR, "input[type='text'][value='Assignee not defined yet.']"
-        ).click()
-        # Click on the first result
+        ).send_keys(self.username)
         driver.find_element(By.CSS_SELECTOR, "li[data-option-array-index='0']").click()
+
         # Find the select element
         select_element = driver.find_element(By.ID, "data-priority")
 
@@ -418,10 +437,10 @@ class Task_tests:
         driver.find_element(By.LINK_TEXT, f"{self.room_name}").click()
         time.sleep(1)
         driver.find_element(By.CLASS_NAME, "kenjaicon-options").click()
-
         driver.find_element(
-            By.CSS_SELECTOR, "li:nth-child(10) > .header-menu-icon-delete"
+            By.CSS_SELECTOR, "li:nth-child(11) > .header-menu-icon-delete"
         ).click()
+
         # Accept popup
         try:
             alert = driver.switch_to.alert

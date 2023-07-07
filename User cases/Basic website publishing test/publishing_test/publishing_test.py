@@ -44,6 +44,7 @@ class Publishing_test:
         self.webdriver_path = webdriver_path
         self.email_address = email_address
         self.password = password
+        self.wait = WebDriverWait(self.driver, 30)
         self.teardown = teardown
         os.environ["PATH"] += self.webdriver_path
         super(Publishing_test, self).__init__()
@@ -56,7 +57,7 @@ class Publishing_test:
         return self
 
     def login(self):
-        self.driver.get("https://kenja.rooms3.dvl/#")
+        self.driver.get("https://r3qa-3.qarooms3.kenja.com/")
         self.driver.maximize_window()
         self.driver.execute_script("document.body.style.zoom='100%'")
         # Enter email address and password
@@ -76,23 +77,31 @@ class Publishing_test:
         )
 
     def create_room(self):
-        # Find "create room" button
-        driver.find_element(
-            By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item"
+        # Go into TEST dpt
+        self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
         ).click()
-        # Click create room
-        wait = WebDriverWait(driver, 10)
-        wait.until(
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
+        ).click()
+
+        # Click on the plus icon next to "Add"
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
+        self.wait.until(
             EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".modal-footer > .btn:nth-child(4)")
+                (By.XPATH, "//*[contains(text(), 'Add sub room')]")
             )
-        )
-        print("Trying to create a room...")
-        driver.find_element(By.ID, "data-name").send_keys("Publishing rooms")
-        driver.find_element(
-            By.CSS_SELECTOR, ".modal-footer > .btn:nth-child(4)"
         ).click()
-        print("Created room")
+        self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
+            "Publishing test room"
+        )
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[contains(text(), 'Add room')]")
+            )
+        ).click()
 
     def create_first_tile(self):
         wait = WebDriverWait(driver, 10)
@@ -227,7 +236,7 @@ class Publishing_test:
         print("Checking if all elements are showing...")
         wait = WebDriverWait(driver, 10)
         elements = [
-            ("Room title", "h1", "Publishing rooms"),
+            ("Room title", "h1", "Publishing test room"),
             ("First Tile", "h2", "First Tile"),
             ("Second Tile", "h2", "Second Tile"),
             (

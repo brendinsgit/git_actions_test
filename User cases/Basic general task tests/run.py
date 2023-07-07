@@ -5,7 +5,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     WebDriverException,
 )
-
+import time
 from task_tests.task_tests import Task_tests, driver
 
 try:

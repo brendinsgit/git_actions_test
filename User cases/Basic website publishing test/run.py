@@ -6,6 +6,7 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from publishing_test.publishing_test import Publishing_test, driver
+import time
 
 try:
     with Publishing_test() as bot:
@@ -18,6 +19,7 @@ try:
         bot.publish_room()
         bot.verify_published_page()
         bot.verify_search()
+
 except NoSuchElementException as e:
     print(f"Failed to find and/or use the element: {e.msg}")
 except ElementNotInteractableException as e:

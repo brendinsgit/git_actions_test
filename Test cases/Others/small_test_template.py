@@ -10,6 +10,7 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 import os
+import time
 
 
 def test_valid_login(driver, email_address, password):
@@ -26,6 +27,7 @@ def test_valid_login(driver, email_address, password):
             (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
         )
     )
+    time.sleep(5)
 
 
 browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
@@ -49,7 +51,7 @@ elif browser.lower() == "chrome":
 else:
     raise Exception("Unsupported browser")
 
-driver.get("https://kenja.rooms3.dvl/#")
+driver.get("https://r3qa-3.qarooms3.kenja.com/")
 driver.maximize_window()
 driver.execute_script("document.body.style.zoom='100%'")
 

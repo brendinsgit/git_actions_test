@@ -50,6 +50,7 @@ class Description_test:
         self.email_address = email_address
         self.password = password
         self.teardown = teardown
+        self.wait = WebDriverWait(self.driver, 30)
         os.environ["PATH"] += self.webdriver_path
         super(Description_test, self).__init__()
 
@@ -61,7 +62,7 @@ class Description_test:
         return self
 
     def login(self):
-        self.driver.get("https://kenja.rooms3.dvl/#")
+        self.driver.get("https://r3qa-3.qarooms3.kenja.com/")
         self.driver.maximize_window()
         self.driver.execute_script("document.body.style.zoom='100%'")
         # Enter email address and password
@@ -81,37 +82,74 @@ class Description_test:
         )
 
     def create_room(self):
-        # Find "create room" button
-        driver.find_element(
-            By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item"
+        # Go into TEST dpt
+        self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
         ).click()
-        # Click create room
-        wait = WebDriverWait(driver, 10)
-        wait.until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, ".modal-footer > .btn:nth-child(4)")
-            )
-        )
-        print("Trying to create a room...")
-        driver.find_element(By.ID, "data-name").send_keys("Publishing rooms")
-        driver.find_element(
-            By.CSS_SELECTOR, ".modal-footer > .btn:nth-child(4)"
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
         ).click()
-        print("Created room")
 
-    def create_tile(self):
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade")))
-        # Wait for the modal-backdrop fade to disappear
-        wait.until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
-        )
-        # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
-        wait.until(
+        # Click on the plus icon next to "Add"
+        self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//*[contains(text(), 'Add sub room')]")
+            )
+        ).click()
+        self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
+            "Description test room"
+        )
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[contains(text(), 'Add room')]")
+            )
+        ).click()
+
+    def create_room(self):
+        # Go into TEST dpt
+        self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
+        ).click()
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
+        ).click()
+
+        # Click on the plus icon next to "Add"
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//*[contains(text(), 'Add sub room')]")
+            )
+        ).click()
+        self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
+            "Description test room"
+        )
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[contains(text(), 'Add room')]")
+            )
+        ).click()
+
+    def create_tile(self):
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
+        element = self.wait.until(
+            lambda driver: EC.visibility_of_element_located(
+                (By.CLASS_NAME, "glyphicon-plus")
+            )(driver)
+            or EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))(driver)
+        )
+        element.click()
+
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH,
@@ -121,11 +159,11 @@ class Description_test:
         ).click()
 
         # Input Tile Name
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, "input#data-name.form-control")
             )
-        ).send_keys("Tile")
+        ).send_keys("Description test tile")
 
     # In order to put in a description, we have to use JS scripts, because the description isn't an input or a text-area
     def headings(self):

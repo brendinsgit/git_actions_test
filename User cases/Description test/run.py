@@ -6,6 +6,7 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from description_test.description_test import Description_test, driver
+import time
 
 try:
     with Description_test() as bot:
@@ -22,6 +23,7 @@ try:
         bot.extra_items()
         bot.finish_tile()
         bot.verify_tile()
+
 except NoSuchElementException as e:
     print(f"Failed to find and/or use the element: {e.msg}")
 except ElementNotInteractableException as e:
