@@ -108,33 +108,6 @@ class Description_test:
             )
         ).click()
 
-    def create_room(self):
-        # Go into TEST dpt
-        self.wait.until(
-            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
-        ).click()
-        self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
-        ).click()
-
-        # Click on the plus icon next to "Add"
-        self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//*[contains(text(), 'Add sub room')]")
-            )
-        ).click()
-        self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
-            "Description test room"
-        )
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Add room')]")
-            )
-        ).click()
-
     def create_tile(self):
         # Wait for the modal-backdrop fade to disappear
         self.wait.until(
