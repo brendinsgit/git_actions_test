@@ -14,6 +14,9 @@ webdriver_path = input("Enter the path to your webdriver: ")
 email_address = input("Please provide an email that can be used to log in: ")
 password = input("Please provide a password that can be used to log in: ")
 os.environ["PATH"] += os.pathsep + webdriver_path
+img_path = input(
+    "Please input the absolute path to the image (more info in QA line doc): "
+)
 
 if browser.lower() == "firefox":
     profile = webdriver.FirefoxProfile()
@@ -46,6 +49,7 @@ class Publishing_test:
         self.password = password
         self.wait = WebDriverWait(self.driver, 30)
         self.teardown = teardown
+        self.image_path = img_path
         os.environ["PATH"] += self.webdriver_path
         super(Publishing_test, self).__init__()
 
@@ -173,33 +177,26 @@ class Publishing_test:
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Add tile']"))
         ).click()
 
-    def add_file_to_tile(self):
-        WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
-        )
-        # Wait for the modal-backdrop fade to disappear
-        WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
-        )
-        driver.find_element(By.CLASS_NAME, "files-toggle").click()
-        driver.find_element(By.CLASS_NAME, "add-file").click()
-        driver.find_element(By.CSS_SELECTOR, "input[type='file']").send_keys("")
+    def add_file(self):
+        # Make sure the view is set to 3 columns
+        driver.find_element(By.XPATH, "//div[@title='Views']").click()
+        driver.find_element(
+            By.XPATH, "//*[text()='Display content of this room in 3 columns']"
+        ).click()
 
-        driver.find_element(By.CLASS_NAME, "btn-primary").click()
+        fileDropDowns = driver.find_elements(By.CSS_SELECTOR, "div.files-toggle")
+        for dropdown in fileDropDowns:
+            dropdown.click()
 
-    def add_comment(self):
-        WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        addFileBtns = driver.find_elements(By.LINK_TEXT, "Add files")
+        addFileBtns[0].click()
+
+        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
+            f"{self.image_path}"
         )
-        # Wait for the modal-backdrop fade to disappear
-        WebDriverWait(driver, 10).until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
-        )
-        driver.find_element(By.CLASS_NAME, "comments-toggle").click()
-        driver.execute_script(
-            f"document.querySelector('div.emoji-wysiwyg-editor').textContent = 'WOOOOOOW'"
-        )
-        driver.find_element(By.XPATH, "//button[text()='Add']").click()
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
+        ).click()
 
     def publish_room(self):
         wait = WebDriverWait(driver, 10)
@@ -262,6 +259,11 @@ class Publishing_test:
                 print(
                     f"Couldn't find {element[0]}, looked for an {element[1]} of '{element[2]}'"
                 )
+        try:
+            wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "doggo.png")))
+            print("Found the doggo pic by link text 'doggo.png'")
+        except (NoSuchElementException, TimeoutException):
+            print("Couldn't find doggo pic. Looked for <a> with link text 'doggo.png'")
 
     def verify_search(self):
         print("Checking the search...")

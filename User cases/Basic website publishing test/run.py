@@ -6,7 +6,7 @@ from selenium.common.exceptions import (
     WebDriverException,
 )
 from publishing_test.publishing_test import Publishing_test, driver
-import time
+
 
 try:
     with Publishing_test() as bot:
@@ -14,8 +14,7 @@ try:
         bot.create_room()
         bot.create_first_tile()
         bot.create_second_tile()
-        # bot.add_file_to_tile() Skip for now, constantly getting error 500
-        # bot.add_comment() Same thing here
+        bot.add_file()
         bot.publish_room()
         bot.verify_published_page()
         bot.verify_search()
