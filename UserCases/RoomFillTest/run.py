@@ -5,24 +5,46 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     WebDriverException,
 )
-from description_test.description_test import Description_test, driver
+from room_fill_test.room_fill_test import Room_fill_test, driver
 import time
 
 try:
-    with Description_test() as bot:
+    with Room_fill_test() as bot:
         bot.login()
-        bot.create_room()
-        bot.create_tile()
-        bot.headings()
+        bot.open_create_room()
+        bot.profile_picture_testing()
+        bot.set_sharing()
+
+        bot.test_headings()
+        bot.move_to_next_line()
         bot.basic_font_manipulation()
         bot.size_manipulation()
-        # bot.link()
+        bot.move_to_next_line()
+        bot.link()
+        bot.move_to_next_line()
         bot.text_alignment()
-        # bot.lists()
-        bot.subscript()
+        bot.move_to_next_line()
         bot.extra_items()
+        bot.test_table()
+        bot.finish_room()
+
+        bot.create_tile()
+        bot.test_headings()
+        bot.move_to_next_line()
+        bot.basic_font_manipulation()
+        bot.size_manipulation()
+        bot.move_to_next_line()
+        bot.link()
+        bot.move_to_next_line()
+        bot.text_alignment()
+        bot.extra_items_tile()
+        bot.test_table()
         bot.finish_tile()
-        bot.verify_tile()
+        print("TILE RESULTS")
+        bot.verify_room()
+        bot.go_back()
+        print("ROOM RESULTS")
+        bot.verify_room()
 
 except NoSuchElementException as e:
     print(f"Failed to find and/or use the element: {e.msg}")

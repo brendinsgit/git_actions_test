@@ -4,39 +4,27 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import os
+from selenium.webdriver.support.ui import Select
 import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-# browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
+
 webdriver_path = input("Enter the path to your Chrome webdriver: ")
 email_address = input("Please provide an email that can be used to log in: ")
 password = input("Please provide a password that can be used to log in: ")
+image_source = input(
+    "Please provide the absolute path to the doggo picture (more info in QA Line doc): "
+)
 os.environ["PATH"] += os.pathsep + webdriver_path
-"""
-if browser.lower() == "firefox":
-    profile = webdriver.FirefoxProfile()
-    profile.accept_untrusted_certs = True
-    options = webdriver.FirefoxOptions()
-    options.binary_location = input(
-        "Since you're a firefox user, please input your firefox.exe location to avoid problems: "
-    )
-    driver = webdriver.Firefox(options=options)
-elif browser.lower() == "chrome":
-    options = webdriver.ChromeOptions()
-    options.add_argument("--ignore-certificate-errors")
-    driver = webdriver.Chrome(options=options)
-else:
-    raise Exception("Unsupported browser")
-"""
 
 options = webdriver.ChromeOptions()
 options.add_argument("--ignore-certificate-errors")
 driver = webdriver.Chrome(options=options)
 
 
-class Description_test:
+class Room_fill_test:
     def __init__(
         self,
         webdriver_path=webdriver_path,
@@ -50,9 +38,10 @@ class Description_test:
         self.email_address = email_address
         self.password = password
         self.teardown = teardown
+        self.img_src = image_source
         self.wait = WebDriverWait(self.driver, 30)
         os.environ["PATH"] += self.webdriver_path
-        super(Description_test, self).__init__()
+        super(Room_fill_test, self).__init__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.teardown:
@@ -81,7 +70,7 @@ class Description_test:
             )
         )
 
-    def create_room(self):
+    def open_create_room(self):
         # Go into TEST dpt
         self.wait.until(
             EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
@@ -100,46 +89,76 @@ class Description_test:
             )
         ).click()
         self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
-            "Description test room"
+            "test room"
         )
+
+    def profile_picture_testing(self):
+        # Add avatar
+        avatar_path = f"{self.img_src}"
+        driver.find_element(By.XPATH, "//input[@name='avatar']").send_keys(avatar_path)
         self.wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Add room')]")
+            EC.visibility_of_element_located((By.CLASS_NAME, "crop-image-preview"))
+        )
+
+        # Save avatar
+        save_button = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='Save']"))
+        )
+        save_button.click()
+
+        # Check if avatar was added successfully
+        driver.implicitly_wait(10)
+        try:
+            pic_slot = driver.find_element(
+                By.CSS_SELECTOR, ".avatar-preview.avatar.huge.drop-zone"
             )
-        ).click()
+            img = pic_slot.find_element(By.TAG_NAME, "img")
+            img_src = img.get_attribute("src")
+            if img_src:
+                print("The avatar slot appears to have an image inside it")
+            else:
+                print("The avatar slot is missing an image")
+        except NoSuchElementException:
+            print("The slot or the image inside the slot wasn't located")
 
-    def create_tile(self):
-        # Wait for the modal-backdrop fade to disappear
-        self.wait.until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
-        )
-        element = self.wait.until(
-            lambda driver: EC.visibility_of_element_located(
-                (By.CLASS_NAME, "glyphicon-plus")
-            )(driver)
-            or EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))(driver)
-        )
-        element.click()
-
-        # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
-        self.wait.until(
-            EC.element_to_be_clickable(
+        # Choose image
+        driver.find_element(By.LINK_TEXT, "Chose image").click()
+        search_input = self.wait.until(
+            EC.visibility_of_element_located(
                 (
                     By.XPATH,
-                    "//small[contains(text(), 'New tile can contain description, tasks, comments and uploaded files')]",
+                    "//input[@name='search'][@class='form-control filter'][@placeholder='Search by name']",
                 )
             )
-        ).click()
+        )
+        search_input.send_keys("Support")
 
-        # Input Tile Name
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (By.CSS_SELECTOR, "input#data-name.form-control")
+        # Check for support paragraph
+        try:
+            self.wait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, "//p[contains(text(), 'Support')]")
+                )
             )
-        ).send_keys("Description test tile")
+            print("Found the support paragraph")
+        except:
+            print("Couldn't find the support paragraph")
 
-    # In order to put in a description, we have to use JS scripts, because the description isn't an input or a text-area
-    def headings(self):
+        # Clear search input and press enter
+        search_input.clear()
+        search_input.send_keys(Keys.ENTER)
+
+        # Click on link and security paragraph
+        driver.find_element(By.LINK_TEXT, "14").click()
+        driver.find_element(By.XPATH, "//p[contains(text(), 'Security')]").click()
+
+    def set_sharing(self):
+        self.wait.until(EC.visibility_of_element_located((By.ID, "data-sharing")))
+        Select(driver.find_element(By.ID, "data-sharing")).select_by_visible_text(
+            "Share as parent room"
+        )
+
+    def test_headings(self):
         headings = ["Heading 1", "Heading 2", "Heading 3"]
         heading_tags = ["h2", "h3", "h4"]
 
@@ -177,6 +196,9 @@ class Description_test:
             By.XPATH, "//button[.//span[text()='Font Background Color']]"
         ).click()
         driver.find_element(By.XPATH, "//button[.//span[text()='Yellow']]").click()
+        # Set font color
+        # driver.find_element(By.XPATH, "//button[.//span[text()='Font Color']]").click()
+        # driver.find_element(By.XPATH, "//button[.//span[text()='Turquoise']]").click()
 
         # Set the text of the first paragraph
         p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
@@ -213,6 +235,12 @@ class Description_test:
         second_paragraph.send_keys(Keys.ARROW_DOWN)
         second_paragraph.send_keys(Keys.ENTER)
 
+    def move_to_next_line(self):
+        p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
+        last_paragraph = p_elements[-1]
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
     def size_manipulation(self):
         sizes = ["Tiny", "Small", "Big", "Huge"]
         paragraphs = [
@@ -223,7 +251,6 @@ class Description_test:
         ]
 
         # Unclick the highlight, yeah it only deselects when clicking twice seperately on it
-        driver.find_element(By.XPATH, "//button[.//span[text()='Highlight']]").click()
         driver.find_element(By.XPATH, "//button[.//span[text()='Highlight']]").click()
 
         for size, paragraph_text in zip(sizes, paragraphs):
@@ -243,12 +270,20 @@ class Description_test:
             # Create new line
             last_paragraph.send_keys(Keys.ARROW_DOWN)
             last_paragraph.send_keys(Keys.ENTER)
+        # Set back to default
+        driver.find_element(By.XPATH, "//button[.//span[text()='Font Size']]").click()
+        driver.find_element(By.XPATH, f"//button[.//span[text()='Default']]").click()
 
-    # def link(self): TO DO: Add this link and make it work
-    #    driver.find_element(By.CLASS_NAME, "ck-button").click()
-    #    driver.find_element(By.XPATH, "//span[contains(text(), 'Paragraph')]").click()
-    #    driver.find_element(By.XPATH, "//button[.//span[text()='Link']]").click()
-    #    driver.find_element(By.CLASS_NAME, "ck-input-text").send_keys("google.com")
+    def link(self):
+        driver.find_element(By.XPATH, "//button[.//span[text()='Link']]").click()
+        driver.find_element(
+            By.XPATH, "//div[@class='ck ck-labeled-field-view__input-wrapper']/input"
+        ).send_keys("https://www.google.com/")
+        driver.find_element(
+            By.XPATH,
+            "//form[@class='ck ck-link-form ck-responsive-form']//button[span[text()='Save']]",
+        ).click()
+
     def text_alignment(self):
         alignments = ["Align right", "Align center", "Justify"]
         paragraphs = ["Align right", "Align center", "Justify"]
@@ -273,28 +308,6 @@ class Description_test:
             last_paragraph.send_keys(Keys.ARROW_DOWN)
             last_paragraph.send_keys(Keys.ENTER)
 
-    # def lists(self): TO DO: Add this one too...
-    # Unordered lists
-    #    driver.find_element(
-    #        By.XPATH, "//button[.//span[text()='Bulleted List']]"
-    #    ).click()
-    #    li_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content ul li")
-    #    last_li = li_elements[-1]
-    #    driver.execute_script(
-    #        "arguments[0].textContent = 'Bulleted list item'", last_li
-    #    )
-    def subscript(self):
-        # Set the paragraph text
-        p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
-        last_paragraph = p_elements[-1]
-        driver.find_element(By.XPATH, "//button[.//span[text()='Subscript']]").click()
-        driver.execute_script(f"arguments[0].textContent = 'Subscript'", last_paragraph)
-        # Move to the next line
-        last_paragraph.send_keys(Keys.ARROW_DOWN)
-        last_paragraph.send_keys(Keys.ENTER)
-        # Unclick the subscript
-        driver.find_element(By.XPATH, "//button[.//span[text()='Subscript']]").click()
-
     def extra_items(self):
         def click_button(button_text):
             driver.find_element(
@@ -308,6 +321,26 @@ class Description_test:
                 f"arguments[0].textContent = '{text}'", last_paragraph
             )
             return last_paragraph
+
+        click_button("Show more items")
+
+        click_button("Subscript")
+
+        # Set the text of the last paragraph to 'Subscript'
+        last_paragraph = set_last_paragraph_text("Subscript")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        click_button("Show more items")
+
+        # Click the 'Subscript' button again to remove it
+        click_button("Subscript")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
 
         # Click the 'Show more items' button
         click_button("Show more items")
@@ -368,6 +401,162 @@ class Description_test:
         last_paragraph.send_keys(Keys.ARROW_DOWN)
         last_paragraph.send_keys(Keys.ENTER)
 
+        click_button("Show more items")
+
+        click_button("Block quote")
+        last_paragraph = set_last_paragraph_text("Beautiful Quote")
+
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        click_button("Show more items")
+        # Unclick
+        click_button("Block quote")
+
+        # Click the 'Show more items' button
+        click_button("Show more items")
+
+        # Click the 'Templates' button
+        click_button("Templates")
+
+        # Click the 'Table for testing' button
+        click_button("Table for testing")
+
+    def test_table(self):
+        input_place = driver.find_element(
+            By.XPATH,
+            "//td[@class='ck-editor__editable ck-editor__nested-editable']/span",
+        )
+        driver.execute_script("arguments[0].textContent = 'Paragraph'", input_place)
+        input_place.click()
+
+    def finish_room(self):
+        self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='Add room']"))
+        ).click()
+
+    def create_tile(self):
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
+        element = self.wait.until(
+            lambda driver: EC.visibility_of_element_located(
+                (By.CLASS_NAME, "glyphicon-plus")
+            )(driver)
+            or EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))(driver)
+        )
+        element.click()
+
+        # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//small[contains(text(), 'New tile can contain description, tasks, comments and uploaded files')]",
+                )
+            )
+        ).click()
+
+        # Input Tile Name
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "input#data-name.form-control")
+            )
+        ).send_keys("test tile")
+
+    def extra_items_tile(self):
+        def click_button(button_text):
+            driver.find_element(
+                By.XPATH, f"//button[.//span[text()='{button_text}']]"
+            ).click()
+
+        def set_last_paragraph_text(text):
+            p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
+            last_paragraph = p_elements[-1]
+            driver.execute_script(
+                f"arguments[0].textContent = '{text}'", last_paragraph
+            )
+            return last_paragraph
+
+        click_button("Subscript")
+
+        # Set the text of the last paragraph to 'Subscript'
+        last_paragraph = set_last_paragraph_text("Subscript")
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+        click_button("Subscript")
+        # Click the 'Show more items' button
+        click_button("Show more items")
+
+        # Click the 'Superscript' button
+        click_button("Superscript")
+
+        # Set the text of the last paragraph to 'Superscript'
+        last_paragraph = set_last_paragraph_text("Superscript")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        # Click the 'Show more items' button
+        click_button("Show more items")
+
+        # Click the 'Superscript' button again
+        click_button("Superscript")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        click_button("Show more items")
+
+        # Click the 'Special characters' button
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[.//span[text()='Special characters']]")
+            )
+        ).click()
+
+        # Set the text of the last paragraph to '₠'
+        last_paragraph = set_last_paragraph_text("₠")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        # Click the 'Strikethrough' button
+        click_button("Strikethrough")
+
+        # Set the text of the last paragraph to 'Crossed out text'
+        last_paragraph = set_last_paragraph_text("Crossed out text")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        # Click the 'Show more items' button
+        click_button("Show more items")
+
+        # Click the 'Strikethrough' button again
+        click_button("Strikethrough")
+
+        # Move to the next line
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        click_button("Show more items")
+
+        click_button("Block quote")
+        last_paragraph = set_last_paragraph_text("Beautiful Quote")
+
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
+
+        click_button("Show more items")
+        # Unclick
+        click_button("Block quote")
+
         # Click the 'Show more items' button
         click_button("Show more items")
 
@@ -380,7 +569,7 @@ class Description_test:
     def finish_tile(self):
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
 
-    def verify_tile(self):
+    def verify_room(self):
         print("Time to see if everything is showing up....")
 
         def check_element(driver, by, value, description):
@@ -461,21 +650,21 @@ class Description_test:
         check_element(
             driver,
             By.XPATH,
-            "//p[@style='text-align:right;']/span[@class='text-huge'][contains(text(), 'Align right')]",
-            "P with style 'text-align:right' containing span with class 'text-huge' and text 'Align right'",
+            "//p[@style='text-align:right;'][contains(text(), 'Align right')]",
+            "P with style 'text-align:right' and text 'Align right'",
         )
 
         check_element(
             driver,
             By.XPATH,
-            "//p[@style='text-align:center;']/span[@class='text-huge'][contains(text(), 'Align center')]",
+            "//p[@style='text-align:center;'][contains(text(), 'Align center')]",
             "P with style 'text-align:center' containing span with class 'text-huge' and text 'Align center'",
         )
 
         check_element(
             driver,
             By.XPATH,
-            "//p[@style='text-align:justify;']/span[@class='text-huge'][contains(text(), 'Justify')]",
+            "//p[@style='text-align:justify;'][contains(text(), 'Justify')]",
             "P with style 'text-align:justify' containing span with class 'text-huge' and text 'Justify'",
         )
 
@@ -499,7 +688,7 @@ class Description_test:
         check_element(
             driver,
             By.XPATH,
-            "//span[contains(text(), '₠')]",
+            "//p[contains(text(), '₠')]",
             "Span with text '₠'",
         )
 
@@ -510,5 +699,33 @@ class Description_test:
             "//s[contains(text(), 'Crossed out text')]",
             "S element with text 'Crossed out text'",
         )
+        check_element(
+            driver,
+            By.XPATH,
+            "//a[@href='https://www.google.com/']",
+            "<a> element with href 'https://www.google.com/'",
+        )
+        check_element(
+            driver,
+            By.XPATH,
+            "//blockquote[contains(., 'Beautiful Quote')]",
+            "<blockquote> with text content 'Beautiful Quote'",
+        )
+        check_element(
+            driver,
+            By.XPATH,
+            "//td[contains(., 'Paragraph')]",
+            "<td> with text content 'Paragraph'",
+        )
         # Check if there is a table
         check_element(driver, By.XPATH, "//table", "Table")
+
+    def go_back(self):
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
+        driver.find_element(
+            By.XPATH,
+            "//span[@class='breadcrumb-label' and contains(text(), 'TEST dpt')]",
+        ).click()
