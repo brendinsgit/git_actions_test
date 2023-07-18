@@ -64,7 +64,7 @@ class Room_fill_test:
         self.driver.find_element(By.CSS_SELECTOR, ".btn-block").click()
 
         # Wait for login to complete
-        WebDriverWait(self.driver, 10).until(
+        self.wait.until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
             )
