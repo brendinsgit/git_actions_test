@@ -4,8 +4,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import os
+from selenium.webdriver.support.color import Color
 from selenium.webdriver.support.ui import Select
-import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -729,3 +729,89 @@ class Room_fill_test:
             By.XPATH,
             "//span[@class='breadcrumb-label' and contains(text(), 'TEST dpt')]",
         ).click()
+
+    def create_forbidden_tile(self):
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
+        element = self.wait.until(
+            lambda driver: EC.visibility_of_element_located(
+                (By.CLASS_NAME, "glyphicon-plus")
+            )(driver)
+            or EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))(driver)
+        )
+        element.click()
+
+        # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//small[contains(text(), 'New tile can contain description, tasks, comments and uploaded files')]",
+                )
+            )
+        ).click()
+
+        # Input Tile Name
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, "input#data-name.form-control")
+            )
+        ).send_keys("forbidden tile")
+        driver.find_element(By.ID, "data-important").click()
+        driver.find_element(By.ID, "data-publish_locked").click()
+
+    def check_if_pinned(self):
+        element = driver.find_element(
+            By.CSS_SELECTOR, ".object.object-important .object-wrapper"
+        )
+        color = element.value_of_css_property("border-top-color")
+        hex_color = Color.from_string(color).hex
+
+        if hex_color == "#940000":
+            print("The border top color is #940000, which ensures the tile is pinned")
+        else:
+            print(
+                "The border top color is not #940000, as it should be for a pinned tile"
+            )
+
+    def check_website_publishing(self):
+        self.wait.until(
+            EC.invisibility_of_element_located(
+                (By.XPATH, "//div[@class='form-overlay']")
+            )
+        )
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
+        print("Time to publish the room...")
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-globe"))
+        ).click()
+
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[text()='Publish as a new site']")
+            )
+        ).click()
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
+        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Content"))).click()
+        self.wait.until(
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".publish-room-item-expand .glyphicon.glyphicon-plus")
+            )
+        ).click()
+        try:
+            driver.find_element(By.CSS_SELECTOR, ".glyphicon.glyphicon-lock")
+            print("Found locked room in content tab")
+        except NoSuchElementException:
+            print(
+                "Couldn't find locked room in content tab. Tried to look for a span with class 'glyphicon-lock'"
+            )

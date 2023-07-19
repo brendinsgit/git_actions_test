@@ -45,7 +45,10 @@ try:
         bot.go_back()
         print("ROOM RESULTS")
         bot.verify_room()
-
+        bot.create_forbidden_tile()
+        bot.finish_tile()
+        bot.check_if_pinned()
+        bot.check_website_publishing()
 except NoSuchElementException as e:
     print(f"Failed to find and/or use the element: {e.msg}")
 except ElementNotInteractableException as e:
