@@ -1,18 +1,24 @@
 import os
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    TimeoutException,
+    StaleElementReferenceException,
+    WebDriverException,
+    NoAlertPresentException,
+)
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import Select
 import os
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
-from selenium.common.exceptions import NoAlertPresentException
 import time
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+
 
 browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
 webdriver_path = input("Enter the path to your webdriver: ")
@@ -87,7 +93,7 @@ class Task_tests:
         self.driver.find_element(By.CSS_SELECTOR, ".btn-block").click()
 
         # Wait for login to complete
-        WebDriverWait(self.driver, 10).until(
+        self.wait.until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
             )
@@ -113,8 +119,8 @@ class Task_tests:
             )
         ).click()
         # Click create room
-        wait = WebDriverWait(driver, 10)
-        element = wait.until(
+
+        element = self.wait.until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, ".modal-footer > .btn:nth-child(4)")
             )
@@ -123,7 +129,7 @@ class Task_tests:
         print("Trying to create a room...")
         # Try to input empty name
         try:
-            WebDriverWait(driver, 10).until(
+            self.wait.until(
                 EC.visibility_of_element_located(
                     (By.XPATH, "//span[@class='field-error']")
                 )
@@ -149,14 +155,15 @@ class Task_tests:
             )
 
     def create_tile(self):
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade")))
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
         # Wait for the modal-backdrop fade to disappear
-        wait.until(
+        self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
-        wait.until(
+        self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
 
@@ -167,13 +174,13 @@ class Task_tests:
         ).click()
 
         # Try to save tile
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Add tile']"))
         ).click()
 
         # See if the error shows up
         try:
-            wait.until(
+            self.wait.until(
                 EC.visibility_of_element_located(
                     (By.XPATH, "//span[@class='field-error']")
                 )
@@ -191,7 +198,7 @@ class Task_tests:
 
     def create_task(self):
         # Wait for the modal-backdrop fade to disappear
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Click on tasks tab
@@ -199,9 +206,9 @@ class Task_tests:
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
         # Set the name
-        WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "data-name"))
-        ).send_keys(self.task_name)
+        self.wait.until(EC.element_to_be_clickable((By.ID, "data-name"))).send_keys(
+            self.task_name
+        )
         # Click on the asignee input
 
         driver.find_element(
@@ -349,8 +356,7 @@ class Task_tests:
 
     def delete_subtask(self):
         print("Now it's time to delete the subtask...")
-        wait = WebDriverWait(driver, 10)  # wait for up to 10 seconds
-        element = wait.until(
+        element = self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, f"//span[text()='{self.subtask_name}']")
             )
@@ -364,9 +370,8 @@ class Task_tests:
             print("The alert for deletion wasn't located...")
         print("Subtask deleted")
         driver.implicitly_wait(10)
-        wait = WebDriverWait(driver, 10)
         try:
-            wait.until(
+            self.wait.until(
                 EC.invisibility_of_element_located(
                     (By.XPATH, f"//span[text()='{self.subtask_name}']")
                 )
@@ -391,7 +396,7 @@ class Task_tests:
 
     def check_if_room_shows_up(self):
         try:
-            WebDriverWait(driver, 10).until(
+            self.wait.until(
                 EC.visibility_of_element_located(
                     (By.XPATH, f"//a[@title='{self.room_name}']")
                 )
@@ -419,10 +424,9 @@ class Task_tests:
         driver.find_element(By.CSS_SELECTOR, "a[title='Tasks']").click()
         # You have to click away on something or else it can't detect the task
         driver.find_element(By.CLASS_NAME, "task-details").click()
-        wait = WebDriverWait(driver, 10)
         try:
             # wait until the element is present on the website
-            wait.until(
+            self.wait.until(
                 EC.presence_of_element_located(
                     (By.XPATH, f"//span[@class='name' and text()='{self.task_name}']")
                 )
@@ -448,3 +452,38 @@ class Task_tests:
         except NoAlertPresentException:
             print("No alert present for room deletion")
         print("Room has been deleted...")
+
+
+bot = Task_tests()
+if __name__ == "__main__":
+    try:
+        bot.login()
+        bot.create_room()
+        bot.create_tile()
+        bot.create_task()
+        bot.verify_tile()
+        # bot.write_comment()
+        bot.check_side_bar()
+        bot.send_email_reminder()
+        bot.add_subtask()
+        bot.delete_subtask()
+        bot.go_to_dashboard()
+        bot.check_if_task_shows_up()
+        bot.check_if_room_shows_up()
+        bot.check_rooms_tab()
+        bot.check_tasks_tab()
+        bot.go_to_dashboard()
+        bot.delete_room()
+    except NoSuchElementException as e:
+        print(f"Failed to find and/or use the element: {e.msg}")
+    except ElementNotInteractableException as e:
+        print(f"Failed to interact with the element: {e.msg}")
+    except TimeoutException as e:
+        print(f"Timed out waiting for element: {e.msg}")
+    except StaleElementReferenceException as e:
+        print(f"Element is no longer attached to the DOM: {e.msg}")
+    except WebDriverException as e:
+        print(f"An error occurred while interacting with the WebDriver: {e.msg}")
+    finally:
+        print("Testing over. Congrats if you didn't get any errors!")
+        driver.quit()

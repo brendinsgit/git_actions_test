@@ -8,7 +8,14 @@ import time
 from datetime import datetime
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    TimeoutException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
+
 
 # browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
 webdriver_path = input("Enter the path to your Chrome webdriver: ")
@@ -80,7 +87,7 @@ class View_test:
         self.driver.find_element(By.CSS_SELECTOR, ".btn-block").click()
 
         # Wait for login to complete
-        WebDriverWait(self.driver, 10).until(
+        self.wait.until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
             )
@@ -196,9 +203,9 @@ class View_test:
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
         # Set the name
-        WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "data-name"))
-        ).send_keys("Kenja Task")
+        self.wait.until(EC.element_to_be_clickable((By.ID, "data-name"))).send_keys(
+            "Kenja Task"
+        )
         driver.find_element(By.XPATH, "//button[text()='Add task']").click()
 
     def add_comment(self):
@@ -438,3 +445,40 @@ class View_test:
             "//img[@src='/emoticons/emo_02.png']",
             "Basic comment by it's text and the emoticon",
         )
+
+
+bot = View_test()
+if __name__ == "__main__":
+    try:
+        bot.login()
+        bot.create_room()
+        for i in range(4):
+            bot.create_tile(i)
+        bot.add_file()
+        bot.add_task()
+        bot.add_comment()
+        bot.add_subroom()
+        bot.switch_to_two_column()
+        bot.verify_everything()
+        bot.switch_to_one_column()
+        bot.verify_everything()
+        bot.switch_to_even_tiles()
+        bot.verify_everything_even()
+        bot.switch_to_mini_tiles()
+        bot.verify_everything_mini()  # Alternative version for mini tiles view
+        bot.switch_to_table_view()
+        bot.verify_everything_table()
+
+    except NoSuchElementException as e:
+        print(f"Failed to find and/or use the element: {e.msg}")
+    except ElementNotInteractableException as e:
+        print(f"Failed to interact with the element: {e.msg}")
+    except TimeoutException as e:
+        print(f"Timed out waiting for element: {e.msg}")
+    except StaleElementReferenceException as e:
+        print(f"Element is no longer attached to the DOM: {e.msg}")
+    except WebDriverException as e:
+        print(f"An error occurred while interacting with the WebDriver: {e.msg}")
+    finally:
+        print("Testing over. Congrats if you didn't get any errors!")
+        driver.quit()

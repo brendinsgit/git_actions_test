@@ -3,10 +3,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    TimeoutException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
 
 browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
 webdriver_path = input("Enter the path to your webdriver: ")
@@ -73,7 +78,7 @@ class Publishing_test:
         self.driver.find_element(By.CSS_SELECTOR, ".btn-block").click()
 
         # Wait for login to complete
-        WebDriverWait(self.driver, 10).until(
+        self.wait.until(
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
             )
@@ -107,18 +112,19 @@ class Publishing_test:
         ).click()
 
     def create_first_tile(self):
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade")))
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
         # Wait for the modal-backdrop fade to disappear
-        wait.until(
+        self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
-        wait.until(
+        self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH,
@@ -128,7 +134,7 @@ class Publishing_test:
         ).click()
 
         # Input Tile Name
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, "input#data-name.form-control")
             )
@@ -140,19 +146,20 @@ class Publishing_test:
             f"document.querySelector('div.ck-content > p').textContent = '{lorem_ipsum_text}'"
         )
         # Try to save tile
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Add tile']"))
         ).click()
 
     def create_second_tile(self):
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade")))
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
         # Wait for the modal-backdrop fade to disappear
-        wait.until(
+        self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
-        wait.until(
+        self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
@@ -161,7 +168,7 @@ class Publishing_test:
             "//small[contains(text(), 'New tile can contain description, tasks, comments and uploaded files')]",
         ).click()
         # Input Tile Name
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, "input#data-name.form-control")
             )
@@ -172,11 +179,18 @@ class Publishing_test:
             f"document.querySelector('div.ck-content > p').textContent = '{lorem_ipsum_text}'"
         )
         # Try to save tile
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Add tile']"))
         ).click()
 
     def add_file(self):
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
+        # Wait for the modal-backdrop fade to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+        )
         # Make sure the view is set to 3 columns
         driver.find_element(By.XPATH, "//div[@title='Views']").click()
         driver.find_element(
@@ -198,28 +212,29 @@ class Publishing_test:
         ).click()
 
     def publish_room(self):
-        wait = WebDriverWait(driver, 10)
         # Wait for the modal-backdrop fade to disappear
-        wait.until(
+        self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         print("Time to publish the room...")
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-globe"))
         ).click()
 
-        WebDriverWait(driver, 10).until(
+        self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[text()='Publish as a new site']")
             )
         ).click()
-        wait.until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade")))
-        publish_button = wait.until(
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+        )
+        publish_button = self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Publish']"))
         )
         publish_button.click()
 
-        element = WebDriverWait(driver, 10).until(
+        element = self.wait.until(
             EC.presence_of_element_located(
                 (By.XPATH, '//p[@class="list-group-item-text data-hide-pending"]/a')
             )
@@ -230,7 +245,6 @@ class Publishing_test:
 
     def verify_published_page(self):
         print("Checking if all elements are showing...")
-        wait = WebDriverWait(driver, 10)
         elements = [
             ("Room title", "h1", "Publishing test room"),
             ("First Tile", "h2", "First Tile"),
@@ -248,7 +262,7 @@ class Publishing_test:
         ]
         for element in elements:
             try:
-                wait.until(
+                self.wait.until(
                     EC.visibility_of_element_located(
                         (By.XPATH, f"//{element[1]}[text()='{element[2]}']")
                     )
@@ -259,7 +273,9 @@ class Publishing_test:
                     f"Couldn't find {element[0]}, looked for an {element[1]} of '{element[2]}'"
                 )
         try:
-            wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "doggo.png")))
+            self.wait.until(
+                EC.visibility_of_element_located((By.LINK_TEXT, "doggo.png"))
+            )
             print("Found the doggo pic by link text 'doggo.png'")
         except (NoSuchElementException, TimeoutException):
             print("Couldn't find doggo pic. Looked for <a> with link text 'doggo.png'")
@@ -315,3 +331,30 @@ class Publishing_test:
         except NoSuchElementException:
             print("'No results found' doesn't seem to show up")
         driver.find_element(By.LINK_TEXT, "Home").click()
+
+
+bot = Publishing_test()
+if __name__ == "__main__":
+    try:
+        bot.login()
+        bot.create_room()
+        bot.create_first_tile()
+        bot.create_second_tile()
+        bot.add_file()
+        bot.publish_room()
+        bot.verify_published_page()
+        bot.verify_search()
+
+    except NoSuchElementException as e:
+        print(f"Failed to find and/or use the element: {e.msg}")
+    except ElementNotInteractableException as e:
+        print(f"Failed to interact with the element: {e.msg}")
+    except TimeoutException as e:
+        print(f"Timed out waiting for element: {e.msg}")
+    except StaleElementReferenceException as e:
+        print(f"Element is no longer attached to the DOM: {e.msg}")
+    except WebDriverException as e:
+        print(f"An error occurred while interacting with the WebDriver: {e.msg}")
+    finally:
+        print("Testing over. Congrats if you didn't get any errors!")
+        driver.quit()
