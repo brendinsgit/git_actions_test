@@ -1,4 +1,11 @@
 import os
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    TimeoutException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -8,17 +15,10 @@ import time
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    ElementNotInteractableException,
-    TimeoutException,
-    StaleElementReferenceException,
-    WebDriverException,
-)
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
 webdriver_path = input("Enter the path to your Chrome webdriver: ")
-
 file_path = input(
     "Please provide the absolute path to the file (More info in QA Line doc): "
 )
@@ -29,7 +29,7 @@ options.add_argument("--ignore-certificate-errors")
 driver = webdriver.Chrome(options=options)
 
 
-class Sidebar_template_test:
+class Tiles_template_test:
     def __init__(
         self,
         webdriver_path=webdriver_path,
@@ -37,7 +37,6 @@ class Sidebar_template_test:
         password="automation_testing1234",
         teardown=False,
     ):
-        global driver
         self.driver = driver
         self.webdriver_path = webdriver_path
         self.email_address = email_address
@@ -46,7 +45,7 @@ class Sidebar_template_test:
         self.file_path = file_path
         self.wait = WebDriverWait(self.driver, 30)
         os.environ["PATH"] += self.webdriver_path
-        super(Sidebar_template_test, self).__init__()
+        super(Tiles_template_test, self).__init__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.teardown:
@@ -230,7 +229,7 @@ class Sidebar_template_test:
         driver.find_element(By.ID, "data-publish_locked").click()
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
 
-    def go_to_sidebar_theme_test(self):
+    def go_to_subway_theme_test(self):
         self.wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
@@ -245,11 +244,11 @@ class Sidebar_template_test:
         )
         driver.find_element(
             By.XPATH,
-            "//span[@class='breadcrumb-label' and text()='Sidebar theme test']",
+            "//span[@class='breadcrumb-label' and text()='Subway theme test']",
         ).click()
         self.wait.until(
             EC.visibility_of_element_located(
-                (By.XPATH, "//span[contains(text(), 'Sidebar theme test')]")
+                (By.XPATH, "//span[contains(text(), 'Subway theme test')]")
             )
         )
         time.sleep(5)
@@ -285,7 +284,7 @@ class Sidebar_template_test:
         self.wait.until(
             EC.element_to_be_clickable((By.LINK_TEXT, "Appearance"))
         ).click()
-        Select(driver.find_element(By.ID, "data-template")).select_by_value("new1")
+        Select(driver.find_element(By.ID, "data-template")).select_by_value("subwayTwo")
 
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='Publish']"))
@@ -298,36 +297,18 @@ class Sidebar_template_test:
         href = element.get_attribute("href")
         driver.get(href)
 
-        """
-            (
-                "menu item with href for The Benefits of Travel",
-                "a",
-                "The Benefits of Travel",
-            ),
-            (
-                "menu item with href for home",
-                "a",
-                "Home",
-            ),
-            (
-                "menu item with href for The Benefits of Mindful Eating",
-                "a",
-                "The Benefits of Mindful Eating",
-            ),
-            """
-
     def verify_published_homepage(self):
         print("Checking if all elements are showing...")
 
         elements = [
-            ("Sidebar theme test tile title", "h1", "Sidebar theme test"),
+            ("Subway theme test tile title", "h1", "Subway theme test"),
             (
                 "The Benefits of Volunteering tile title",
                 "h2",
                 "The Benefits of Volunteering",
             ),
             (
-                "Tile Sidebar theme test tile description",
+                "Tile Subway theme test tile description",
                 "div",
                 "As the world continues to face the challenges of climate change, the need for sustainable energy sources has never been more pressing.",
             ),
@@ -347,11 +328,14 @@ class Sidebar_template_test:
                 "Learning a new language is an amazing way to expand our horizons and connect with other cultures. It allows us to communicate with people from different parts of the world, and opens up new opportunities for travel, work, and personal growth.",
             ),
             (
-                "Sidebar theme test sidebar title",
-                "h1",
-                "Sidebar theme test",
+                "Travel benefits subroom name",
                 "div",
-                "title-container",
+                "The Benefits of Travel",
+            ),
+            (
+                "Creative expression subroom name",
+                "div",
+                "The Benefits of Creative Expression",
             ),
         ]
         self.verify_elements(elements)
@@ -361,7 +345,7 @@ class Sidebar_template_test:
         elements = [
             ("Benefits of travel h1", "h1", "The Benefits of Travel"),
             (
-                "The Importance of Regular Exercise title h2",
+                "The Importance of Regular Exercise title h3",
                 "h2",
                 "The Importance of Regular Exercise",
             ),
@@ -464,35 +448,10 @@ class Sidebar_template_test:
             print("Found the forbidden tile even though it shouldn't be showing up")
         self.verify_elements(elements)
 
-    def verify_nesting(self):
-        try:
-            ul = driver.find_element(By.XPATH, "//ul[@class='list-inline']")
-            lis = ul.find_elements(By.TAG_NAME, "li")
-            if len(lis) == 3:
-                a_texts = [li.find_element(By.TAG_NAME, "a").text for li in lis]
-                expected_a_texts = [
-                    "Sidebar theme test",
-                    "The Benefits of Creative Expression",
-                    "The Benefits of Mindful Eating",
-                ]
-                if a_texts == expected_a_texts:
-                    print("Nesting seems to work")
-                else:
-                    print(
-                        "The text inside of the <a> tags at the top doesn't seem to be right"
-                    )
-        except NoSuchElementException:
-            print(
-                "Couldn't locate one of the elements needed to verify if the nesting at the top of the page works correctly"
-            )
-
     def verify_search(self):
         print("Checking the search...")
-        driver.find_element(By.LINK_TEXT, "Home").click()
-        elements = driver.find_elements(By.CSS_SELECTOR, "input.form-control[name='q']")
-        for element in elements:
-            print(element.get_attribute("outerHTML"))
-        elements[1].send_keys("Positive")
+
+        driver.find_element(By.CLASS_NAME, "form-control").send_keys("Positive")
         driver.find_element(By.CLASS_NAME, "btn-default").click()
         try:
             result_statistics = driver.find_element(
@@ -519,13 +478,13 @@ class Sidebar_template_test:
                 print(f"Couldn't find the {tile} tile")
 
 
-bot = Sidebar_template_test()
+bot = Tiles_template_test()
 if __name__ == "__main__":
     try:
         bot.login()
         bot.go_into_TESTdpt()
         bot.create_room(
-            "Sidebar theme test",
+            "Subway theme test",
             "As the world continues to face the challenges of climate change, the need for sustainable energy sources has never been more pressing.",
         )
         bot.create_tile(
@@ -562,15 +521,13 @@ if __name__ == "__main__":
             "The Benefits of Positive Thinking",
             "Positive thinking is the practice of focusing on the good in any situation and maintaining a positive outlook on life. It has been shown to have numerous benefits for our mental and physical health.",
         )
-        bot.go_to_sidebar_theme_test()
+        bot.go_to_subway_theme_test()
         bot.open_website_publishing()
         bot.edit_appearance_and_publish()
         bot.verify_published_homepage()
         bot.verify_benefits_subroom()
         bot.verify_creative_expression_subroom()
         bot.verify_mindful_eating_subroom()
-        bot.verify_nesting()
-        # bot.verify_search() Can't interact with search-bar
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
     except ElementNotInteractableException as e:
