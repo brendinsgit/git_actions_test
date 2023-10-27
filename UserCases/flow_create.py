@@ -37,7 +37,6 @@ for option in options:
     chrome_options.add_argument(option)
 
 chrome_service = Service(webdriver_path)
-
 driver = webdriver.Chrome(ChromeDriverManager().install(),options=chrome_options)
 # if browser.lower() == "firefox":
 #     profile = webdriver.FirefoxProfile()
@@ -53,7 +52,6 @@ driver = webdriver.Chrome(ChromeDriverManager().install(),options=chrome_options
 #     driver = webdriver.Chrome(options=options)
 # else:
 #     raise Exception("Unsupported browser")
-
 
 class Flow_create:
     def __init__(
@@ -160,17 +158,6 @@ class Flow_create:
             ).click()
             time.sleep(0.5)
             self.driver.switch_to.alert.accept()
-                   
-
-        
-    
-        
-        
-
-
-        
-
-
 
 bot = Flow_create()
 if __name__ == "__main__":
