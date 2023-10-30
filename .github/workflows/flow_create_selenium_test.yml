@@ -1,0 +1,30 @@
+# This is a basic workflow that is manually triggered
+
+name: Flow create selenium action
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches:
+      - 'main'
+# This workflow_dispatch only stays here just for manually start this action
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "run_test"
+  run_test:
+    # The type of runner that the job will run on
+    runs-on:  windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip' # caching pip dependencies
+    - run: |
+       pip install selenium webdriver-manager
+       python UserCases/flow_create.py
