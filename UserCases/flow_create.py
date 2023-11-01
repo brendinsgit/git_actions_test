@@ -13,7 +13,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import (
     NoSuchElementException,
     ElementNotInteractableException,
-    TimeoutException,
     StaleElementReferenceException,
     WebDriverException,
 )
