@@ -29,4 +29,5 @@ jobs:
     - run: |
        chrome --version
        pip install -r requirements.txt
+       pip install --upgrade selenium webdriver-manager
        python UserCases/flow_create.py
