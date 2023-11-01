@@ -28,6 +28,6 @@ jobs:
         cache: 'pip' # caching pip dependencies
     - run: |
        chrome --version
-       pip install -r requirements.txt
        pip install --upgrade selenium webdriver-manager
+       pip install -r requirements.txt
        python UserCases/flow_create.py
