@@ -38,9 +38,8 @@ options = [
 for option in options:
     chrome_options.add_argument(option)
 
-# chrome_service = Service(webdriver_path)
-service = Service('C:\Program Files\Chrome Driver\chromedriver.exe')
-driver = webdriver.Chrome(options=chrome_options, service=service)
+chrome_service = Service(webdriver_path)
+driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
 # if browser.lower() == "firefox":
 #     profile = webdriver.FirefoxProfile()
 #     profile.accept_untrusted_certs = True
