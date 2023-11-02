@@ -34,7 +34,6 @@ jobs:
     
     - name: Run tests
     - run: python UserCases/flow_create.py
-    - 
-    run: python UserCases/publishing_test.py
+    - run: python UserCases/publishing_test.py
     
   
