@@ -32,7 +32,8 @@
       - name: Install Dependencies
         run: pip install -r requirements.txt
       
-      - name: Run tests
+      - name: Run flow create
         run: python UserCases/flow_create.py
+      - name: Run publishing test
         run: python UserCases/publishing_test.py
     
