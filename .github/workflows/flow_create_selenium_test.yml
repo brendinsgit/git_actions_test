@@ -20,14 +20,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-    - uses: browser-actions/setup-chrome@v1
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.x'
         cache: 'pip' # caching pip dependencies
-    - run: |
-       chrome --version
-       pip install --upgrade selenium webdriver-manager
+        
+    - name: Install Dependencies
+      run: |
        pip install -r requirements.txt
        python UserCases/flow_create.py

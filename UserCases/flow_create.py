@@ -3,6 +3,7 @@ import time
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -13,6 +14,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import (
     NoSuchElementException,
     ElementNotInteractableException,
+    TimeoutException,
     StaleElementReferenceException,
     WebDriverException,
 )
@@ -37,7 +39,7 @@ for option in options:
     chrome_options.add_argument(option)
 
 chrome_service = Service(webdriver_path)
-driver = webdriver.Chrome(ChromeDriverManager().install(),options=chrome_options)
+driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
 # if browser.lower() == "firefox":
 #     profile = webdriver.FirefoxProfile()
 #     profile.accept_untrusted_certs = True
