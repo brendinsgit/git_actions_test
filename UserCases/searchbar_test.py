@@ -6,6 +6,10 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     WebDriverException,
 )
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -18,15 +22,25 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
-webdriver_path = input("Enter the path to your Chrome webdriver: ")
-file_path = input(
-    "Please provide the absolute path to the file (More info in QA Line doc): "
-)
+webdriver_path = ChromeDriverManager().install()
+file_path = "TestFiles/TheWondersOfNature.txt"
 os.environ["PATH"] += os.pathsep + webdriver_path
 
-options = webdriver.ChromeOptions()
-options.add_argument("--ignore-certificate-errors")
-driver = webdriver.Chrome(options=options)
+chrome_options = Options()
+options = [
+    #"--headless",
+   #"--disable-gpu",
+    #"--window-size=1920,1200",
+    "--ignore-certificate-errors",
+    "--disable-extensions",
+    "--no-sandbox",
+    "--disable-dev-shm-usage"
+]
+for option in options:
+    chrome_options.add_argument(option)
+
+chrome_service = Service(webdriver_path)
+driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
 
 
 class Searchbar_test:

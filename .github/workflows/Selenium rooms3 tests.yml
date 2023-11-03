@@ -38,4 +38,8 @@
         run: python UserCases/publishing_test.py
       - name: Run room fill test
         run: python UserCases/room_fill_test.py
+      - name: Run search bar test
+        run: python UserCases/searchbar_test.py
+      - name: Run sidebar temp test
+        run: python UserCases/sidebar_temp_test.py
     
