@@ -42,4 +42,14 @@
         run: python UserCases/searchbar_test.py
       - name: Run sidebar temp test
         run: python UserCases/sidebar_temp_test.py
+      - name: Run subway temp test
+        run: python UserCases/subway_temp_test.py
+      - name: Run subway two temp test
+        run: python UserCases/subwaytwo_temp_test.py
+      - name: Run task tests
+        run: python UserCases/task_tests.py
+      - name: Run tiles temp test
+        run: python UserCases/tiles_temp_test.py
+      - name: Run view test
+        run: python UserCases/view_test.py
     

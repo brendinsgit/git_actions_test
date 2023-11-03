@@ -1,4 +1,8 @@
 import os
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -18,33 +22,44 @@ from selenium.common.exceptions import (
 
 
 # browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
-webdriver_path = input("Enter the path to your Chrome webdriver: ")
-email_address = input("Please provide an email that can be used to log in: ")
-password = input("Please provide a password that can be used to log in: ")
-img_path = input(
-    "Please input the absolute path to the image (more info in QA line doc): "
-)
+webdriver_path = ChromeDriverManager().install()
+email_address = "max.gapa+automation_tests@kenja.com"
+password = "automation_testing1234"
+img_path = "rooms3-selenium-tests/TestFiles/doggo.png"
 os.environ["PATH"] += os.pathsep + webdriver_path
-"""
-if browser.lower() == "firefox":
-    profile = webdriver.FirefoxProfile()
-    profile.accept_untrusted_certs = True
-    options = webdriver.FirefoxOptions()
-    options.binary_location = input(
-        "Since you're a firefox user, please input your firefox.exe location to avoid problems: "
-    )
-    driver = webdriver.Firefox(options=options)
-elif browser.lower() == "chrome":
-    options = webdriver.ChromeOptions()
-    options.add_argument("--ignore-certificate-errors")
-    driver = webdriver.Chrome(options=options)
-else:
-    raise Exception("Unsupported browser")
-"""
 
-options = webdriver.ChromeOptions()
-options.add_argument("--ignore-certificate-errors")
-driver = webdriver.Chrome(options=options)
+
+# if browser.lower() == "firefox":
+#     profile = webdriver.FirefoxProfile()
+#     profile.accept_untrusted_certs = True
+#     options = webdriver.FirefoxOptions()
+#     options.binary_location = input(
+#         "Since you're a firefox user, please input your firefox.exe location to avoid problems: "
+#     )
+#     driver = webdriver.Firefox(options=options)
+# elif browser.lower() == "chrome":
+#     options = webdriver.ChromeOptions()
+#     options.add_argument("--ignore-certificate-errors")
+#     driver = webdriver.Chrome(options=options)
+# else:
+#     raise Exception("Unsupported browser")
+
+
+chrome_options = Options()
+options = [
+    #"--headless",
+    #"--disable-gpu",
+    #"--window-size=1920,1200",
+    "--ignore-certificate-errors",
+    "--disable-extensions",
+    "--no-sandbox",
+    "--disable-dev-shm-usage"
+]
+for option in options:
+    chrome_options.add_argument(option)
+
+chrome_service = Service(webdriver_path)
+driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
 
 
 class View_test:

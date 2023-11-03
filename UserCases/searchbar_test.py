@@ -29,7 +29,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 chrome_options = Options()
 options = [
     #"--headless",
-   #"--disable-gpu",
+    #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
