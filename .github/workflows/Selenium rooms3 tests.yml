@@ -36,4 +36,6 @@
         run: python UserCases/flow_create.py
       - name: Run publishing test
         run: python UserCases/publishing_test.py
+      - name: Run room fill test
+        run: python UserCases/room_fill_test.py
     
