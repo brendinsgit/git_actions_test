@@ -1,5 +1,5 @@
 import os
-from selenium.common.exceptions import (import
+from selenium.common.exceptions import (
     NoSuchElementException,
     ElementNotInteractableException,
     TimeoutException,
