@@ -32,6 +32,8 @@
       - name: Install Dependencies
         run: pip install -r requirements.txt
       
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Run flow create
         run: python UserCases/flow_create.py
       - name: Run publishing test
