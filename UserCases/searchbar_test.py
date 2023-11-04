@@ -23,9 +23,8 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
 webdriver_path = ChromeDriverManager().install()
-file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
 os.environ["PATH"] += os.pathsep + webdriver_path
-
+file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
 chrome_options = Options()
 options = [
     #"--headless",
@@ -272,8 +271,12 @@ class Searchbar_test:
             button.click()
 
         driver.find_element(By.ID, "search-rooms-input").clear()
-        driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
-        print("Checking if tile shows up after typing in the name 'い')...")
+        input_text = "い"
+        encoded_text = input_text.encode("utf-8")
+        driver.find_element(By.ID, "search-rooms-input").send_keys(encoded_text)
+        print(f"Checking if tile shows up after typing in the name '{input_text}'...")
+        # driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
+        # print("Checking if tile shows up after typing in the name 'い')...")
         self.check_element_presence(
             "//div[@class='search-items__item-title' and text()='Test task']"
         )
