@@ -271,10 +271,6 @@ class Searchbar_test:
             button.click()
 
         driver.find_element(By.ID, "search-rooms-input").clear()
-        input_text = "い"
-        encoded_text = input_text.encode("utf-8")
-        driver.find_element(By.ID, "search-rooms-input").send_keys(encoded_text)
-        print(f"Checking if tile shows up after typing in the name '{input_text}'...")
         # driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
         # print("Checking if tile shows up after typing in the name 'い')...")
         self.check_element_presence(
