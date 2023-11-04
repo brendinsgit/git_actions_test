@@ -23,7 +23,7 @@ from selenium.common.exceptions import (
 
 
 webdriver_path = ChromeDriverManager().install()
-file_path = "rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
+file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()

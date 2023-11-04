@@ -25,7 +25,7 @@ from selenium.common.exceptions import (
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
-image_source = "rooms3-selenium-tests/TestFiles/doggo.png"
+image_source = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
