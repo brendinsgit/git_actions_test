@@ -219,9 +219,7 @@ class Searchbar_test:
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
         ).click()
         driver.find_element(By.LINK_TEXT, "Add files").click()
-        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
-            f"{self.file_path}"
-        )
+        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(file_path)
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
         ).click()
