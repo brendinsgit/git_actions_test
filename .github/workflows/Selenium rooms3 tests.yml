@@ -1,0 +1,64 @@
+  # This is a basic workflow that is manually/push triggered
+
+  name: Selenium rooms3 tests
+
+  # Controls when the action will run. Workflow runs when manually triggered using the UI
+  # or API.
+  on:
+    push:
+      branches:
+        - 'main'
+  # This workflow_dispatch only stays here just for manually start this action
+    workflow_dispatch:
+
+  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  jobs:
+    run_tests:
+    # This workflow contains a single job called "run_tests"
+      # The type of runner that the job will run on
+      runs-on:  windows-latest
+
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          cache: 'pip' # caching pip dependencies
+          
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run flow create
+        run: python UserCases/flow_create.py
+      - name: Run publishing test
+        run: python UserCases/publishing_test.py
+      - name: Run room fill test
+        run: python UserCases/room_fill_test.py
+      - name: Run search bar test
+        run: python UserCases/searchbar_test.py
+      - name: Run sidebar temp test
+        run: python UserCases/sidebar_temp_test.py
+      - name: Run subway temp test
+        run: python UserCases/subway_temp_test.py
+      - name: Run subway two temp test
+        run: python UserCases/subwaytwo_temp_test.py
+      - name: Run task tests
+        run: python UserCases/task_tests.py
+      - name: Run tiles temp test
+        run: python UserCases/tiles_temp_test.py
+      - name: Run view test
+        run: python UserCases/view_test.py
+      - name: Commit and publish test results
+        run:
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add .github/workflows/TestResults
+        git commit -m "Add test results"
+        git push
+    

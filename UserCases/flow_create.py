@@ -2,8 +2,8 @@ import os
 import time
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -28,7 +28,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 chrome_options = Options()
 options = [
     #"--headless",
-   #"--disable-gpu",
+    #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",

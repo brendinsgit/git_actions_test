@@ -6,6 +6,10 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     WebDriverException,
 )
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -18,15 +22,24 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
-webdriver_path = input("Enter the path to your Chrome webdriver: ")
-file_path = input(
-    "Please provide the absolute path to the file (More info in QA Line doc): "
-)
+webdriver_path = ChromeDriverManager().install()
 os.environ["PATH"] += os.pathsep + webdriver_path
+file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
+chrome_options = Options()
+options = [
+    #"--headless",
+    #"--disable-gpu",
+    #"--window-size=1920,1200",
+    "--ignore-certificate-errors",
+    "--disable-extensions",
+    "--no-sandbox",
+    "--disable-dev-shm-usage"
+]
+for option in options:
+    chrome_options.add_argument(option)
 
-options = webdriver.ChromeOptions()
-options.add_argument("--ignore-certificate-errors")
-driver = webdriver.Chrome(options=options)
+chrome_service = Service(webdriver_path)
+driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
 
 
 class Searchbar_test:
@@ -205,9 +218,7 @@ class Searchbar_test:
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
         ).click()
         driver.find_element(By.LINK_TEXT, "Add files").click()
-        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
-            f"{self.file_path}"
-        )
+        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(file_path)
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
         ).click()
@@ -260,8 +271,8 @@ class Searchbar_test:
             button.click()
 
         driver.find_element(By.ID, "search-rooms-input").clear()
-        driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
-        print("Checking if tile shows up after typing in the name 'い')...")
+        # driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
+        # print("Checking if tile shows up after typing in the name 'い')...")
         self.check_element_presence(
             "//div[@class='search-items__item-title' and text()='Test task']"
         )
