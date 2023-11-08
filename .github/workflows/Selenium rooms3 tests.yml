@@ -55,10 +55,5 @@
       - name: Run view test
         run: python UserCases/view_test.py
       - name: Commit and publish test results
-        run:
-        git config --local user.email "actions@github.com"
-        git config --local user.name "GitHub Actions"
-        git add TestResults
-        git commit -m "Add test results"
-        git push
+        run: git config --local user.email "actions@github.com" git config --local user.name "GitHub Actions" git add TestResults git commit -m "Add test results" git push
     
