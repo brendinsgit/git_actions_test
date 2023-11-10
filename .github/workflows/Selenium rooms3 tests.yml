@@ -71,9 +71,17 @@
       - name: Run view test
         run: python UserCases/view_test.py
       - name: upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-pages-artifact@v1
         with: 
-          path: ./
+          path: './artifacts'
+      - name: Send artifact to ZenHub
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.ZENHUB_API_KEY }}" \
+            --data "{ \"query\": \"mutation { sendToZenHub(artifactInfo: { descriptor: \\\"GitHub Actions Artifact\\\" }) }\" }" \
+            https://api.zenhub.com/public/graphql
+
       - name: deploy to Github Pages
         uses: actions/deploy-pages@v2
         with:
