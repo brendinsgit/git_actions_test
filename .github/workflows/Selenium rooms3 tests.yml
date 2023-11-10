@@ -71,11 +71,11 @@
       - name: Run view test
         run: python UserCases/view_test.py
       - name: upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v2
         with: 
-          path: './'
+          path: ./
       - name: deploy to Github Pages
         uses: actions/deploy-pages@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
         id: deployment
