@@ -74,16 +74,16 @@
         uses: actions/upload-pages-artifact@v1
         with: 
           path: './artifacts'
-      - name: Send artifact to ZenHub
-        run: |
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.ZENHUB_API_KEY }}" \
-            --data "{ \"query\": \"mutation { sendToZenHub(artifactInfo: { descriptor: \\\"GitHub Actions Artifact\\\" }) }\" }" \
-            https://api.zenhub.com/public/graphql
+      # - name: Send artifact to ZenHub
+      #   run: |
+      #     curl -X POST \
+      #       -H "Content-Type: application/json" \
+      #       -H "Authorization: Bearer ${{ secrets.ZENHUB_API_KEY }}" \
+      #       --data "{ \"query\": \"mutation { sendToZenHub(artifactInfo: { descriptor: \\\"GitHub Actions Artifact\\\" }) }\" }" \
+      #       https://api.zenhub.com/public/graphql
 
-      - name: deploy to Github Pages
-        uses: actions/deploy-pages@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-        id: deployment
+      # - name: deploy to Github Pages
+      #   uses: actions/deploy-pages@v2
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #   id: deployment
