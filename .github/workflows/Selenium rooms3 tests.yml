@@ -87,24 +87,25 @@
           path: './artifacts'
 
       - name: Create GitHub Issue
-        uses: octokit/rest.js@v18
+        uses: actions/github-script@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run GitHub Script
         run: |
-          const octokit = new (require('octokit/rest.js'))();
-
+          const { context, GitHub } = require('github-script');
+          const octokit = new GitHub();
+    
           // Use the GitHub API to create an issue
           const response = await octokit.issues.create({
-            owner: process.env.GITHUB_REPOSITORY_OWNER,
-            repo: process.env.GITHUB_REPOSITORY,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
             title: 'GitHub Actions Test Results',
             body: 'Test results are available in the artifacts. Check the workflow for details.',
           });
+    
           console.log(`Created GitHub Issue #${response.data.number}`);
+    
 
     
         
