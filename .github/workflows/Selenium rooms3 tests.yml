@@ -86,21 +86,23 @@
         with: 
           path: './artifacts'
       - name: Create GitHub Issue
-        run: |
-          $token="${{ secrets.GITHUB_TOKEN }}"
-          $repository="${{ github.repository }}"
-          $title="GitHub Actions Test Results"
-          $body="Test results are available in the artifacts. Check the workflow for details."
-      
-          $response = Invoke-RestMethod -Uri "https://api.github.com/repos/$repository/issues" -Headers @{
-            Authorization = "token $token"
-            Accept = "application/vnd.github.v3+json"
-          } -Method Post -Body (@{"title"=$title; "body"=$body} | ConvertTo-Json)
-      
-          $issue_number = $response.number
-          Write-Host "Created GitHub Issue #$issue_number"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { context, GitHub } = require('github-script');
+            const github = new GitHub();
+    
+            // Use the GitHub API to create an issue
+            const response = await github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'GitHub Actions Test Results',
+              body: 'Test results are available in the artifacts. Check the workflow for details.',
+            });
+    
+            console.log(`Created GitHub Issue #${response.data.number}`);
+        
 
 
 
