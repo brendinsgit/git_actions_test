@@ -80,7 +80,7 @@
 
       - name: Run view test
         run: python UserCases/view_test.py
-        
+
       - name: upload artifact
         uses: actions/upload-pages-artifact@v1
         with: 
@@ -115,10 +115,10 @@
               cache: 'pip' # caching pip dependencies
 
           - name: Install Chrome stable package
-            run: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            run: sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
           - name: Install google-chrome
-            run: dpkg -i google-chrome-stable_current_amd64.deb  
+            run: sudo dpkg -i google-chrome-stable_current_amd64.deb  
 
           - name: Install Dependencies
             run: pip install -r requirements.txt
