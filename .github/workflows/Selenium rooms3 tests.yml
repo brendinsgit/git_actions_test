@@ -16,6 +16,7 @@
     contents: read
     pages: write
     id-token: write
+    issues: write
 
   # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
   # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -85,26 +86,11 @@
         uses: actions/upload-pages-artifact@v1
         with: 
           path: './artifacts'
-
+      
       - name: Create GitHub Issue
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          const { context, GitHub } = require('github-script');
-          const octokit = new GitHub();
-    
-          // Use the GitHub API to create an issue
-          const response = await octokit.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: 'GitHub Actions Test Results',
-            body: 'Test results are available in the artifacts. Check the workflow for details.',
-          });
-    
-          console.log(`Created GitHub Issue #${response.data.number}`);
     
 
     
