@@ -73,7 +73,6 @@ class Publishing_test:
         self.wait = WebDriverWait(self.driver, 30)
         self.teardown = teardown
         self.img_src = image_source
-        # self.image_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
         os.environ["PATH"] += self.webdriver_path
         super(Publishing_test, self).__init__()
 
