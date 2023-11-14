@@ -90,13 +90,13 @@
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { context, GitHub } = require('github-script');
+            const { context: repoContext, GitHub } = require('github-script');
             const github = new GitHub();
     
             // Use the GitHub API to create an issue
             const response = await github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: repoContext.repo.owner,
+              repo: repoContext.repo.repo,
               title: 'GitHub Actions Test Results',
               body: 'Test results are available in the artifacts. Check the workflow for details.',
             });
