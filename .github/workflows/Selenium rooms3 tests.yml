@@ -47,6 +47,8 @@
           
       - name: Install Dependencies
         run: pip install -r requirements.txt
+      - name: Install Chrome Browser
+        run:  sudo dpkg -i google-chrome-stable_current_amd64.deb
       
       - name: Checkout code
         uses: actions/checkout@v3
