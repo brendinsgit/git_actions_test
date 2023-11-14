@@ -90,8 +90,8 @@
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { context: repoContext, GitHub } = require('github-script');
-            const github = new GitHub();
+            const { context: repoContext, GitHub: GitHubAPI } = require('github-script');
+            const github = new GitHubAPI();
     
             // Use the GitHub API to create an issue
             const response = await github.issues.create({
