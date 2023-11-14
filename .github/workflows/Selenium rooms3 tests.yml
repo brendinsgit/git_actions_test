@@ -85,19 +85,24 @@
         uses: actions/upload-pages-artifact@v1
         with: 
           path: './artifacts'
-      # - name: Send artifact to ZenHub
-      #   run: |
-      #     curl -X POST \
-      #       -H "Content-Type: application/json" \
-      #       -H "Authorization: Bearer ${{ secrets.ZENHUB_API_KEY }}" \
-      #       --data "{ \"query\": \"mutation { sendToZenHub(artifactInfo: { descriptor: \\\"GitHub Actions Artifact\\\" }) }\" }" \
-      #       https://api.zenhub.com/public/graphql
+      - name: Create GitHub Issue
+        run: |
+          token="${{ secrets.GITHUB_TOKEN }}"
+          repository="${{ github.repository }}"
+          title="GitHub Actions Test Results"
+          body="Test results are available in the artifacts. Check the workflow for details."
 
-      # - name: deploy to Github Pages
-      #   uses: actions/deploy-pages@v2
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #   id: deployment
+          response=$(curl -sSL -X POST -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" \
+              -d "{\"title\":\"$title\",\"body\":\"$body\"}" \
+              "https://api.github.com/repos/$repository/issues")
+
+          issue_number=$(echo "$response" | jq -r .number)
+          echo "Created GitHub Issue #$issue_number"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
     run_tests_ubuntu:
         # This workflow contains a single job called "run_tests_ubuntu"
           # The type of runner that the job will run on
