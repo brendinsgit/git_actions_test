@@ -22,6 +22,7 @@ from selenium.common.exceptions import (
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
+image_source = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 # if browser.lower() == "firefox":
@@ -71,7 +72,8 @@ class Publishing_test:
         self.password = password
         self.wait = WebDriverWait(self.driver, 30)
         self.teardown = teardown
-        self.image_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
+        self.img_src = image_source
+        # self.image_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
         os.environ["PATH"] += self.webdriver_path
         super(Publishing_test, self).__init__()
 
@@ -223,7 +225,7 @@ class Publishing_test:
         addFileBtns[0].click()
 
         driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
-            f"{self.image_path}"
+            f"{self.img_src}"
         )
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
@@ -294,7 +296,7 @@ class Publishing_test:
             self.wait.until(
                 EC.visibility_of_element_located((By.LINK_TEXT, "doggo.png"))
             )
-            print("Found the doggo pic by link text 'doggo.png'")
+            print("Found thedoggo  pic by link text 'doggo.png'")
         except (NoSuchElementException, TimeoutException):
             print("Couldn't find doggo pic. Looked for <a> with link text 'doggo.png'")
 
