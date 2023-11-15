@@ -26,7 +26,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
-file_path = "/home/runner/work/rooms3-selenium-tests/rooms3-selenium-tests"
+file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
