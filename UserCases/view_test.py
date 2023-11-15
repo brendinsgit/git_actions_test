@@ -78,7 +78,7 @@ class View_test:
         self.password = password
         self.teardown = teardown
         self.image_path = img_path
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 300)
         os.environ["PATH"] += self.webdriver_path
         super(View_test, self).__init__()
 

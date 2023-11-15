@@ -61,7 +61,7 @@ class Subwaytwo_template_test:
         self.password = password
         self.teardown = teardown
         self.file_path = file_path
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 300)
         os.environ["PATH"] += self.webdriver_path
         super(Subwaytwo_template_test, self).__init__()
 

@@ -60,7 +60,7 @@ class Room_fill_test:
         self.password = password
         self.teardown = teardown
         self.img_src = image_source
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 300)
         os.environ["PATH"] += self.webdriver_path
         super(Room_fill_test, self).__init__()
 

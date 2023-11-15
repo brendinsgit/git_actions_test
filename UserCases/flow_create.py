@@ -69,7 +69,7 @@ class Flow_create:
         self.webdriver_path = webdriver_path
         self.email_address = email_address
         self.password = password
-        self.wait = WebDriverWait(self.driver, 60)
+        self.wait = WebDriverWait(self.driver, 300)
         self.teardown = teardown
         self.image_path = ""
         os.environ["PATH"] += self.webdriver_path

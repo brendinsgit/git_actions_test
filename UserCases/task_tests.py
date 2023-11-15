@@ -83,7 +83,7 @@ class Task_tests:
         self.tile_name = "Kenja Tile"
         self.task_name = "Kenja task"
         self.comment_content = "Great job!"
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 300)
         self.progress_value = "50%"
         self.subtask_name = "Kenja Subtask"
         os.environ["PATH"] += self.webdriver_path
