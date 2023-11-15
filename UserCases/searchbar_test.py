@@ -24,7 +24,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 webdriver_path = ChromeDriverManager().install()
 os.environ["PATH"] += os.pathsep + webdriver_path
-file_path = "/home/runner/work/rooms3-selenium-tests/rooms3-selenium-tests/"
+file_path = "/home/runner/work/rooms3-selenium-tests/rooms3-selenium-tests"
 chrome_options = Options()
 options = [
     "--headless",
