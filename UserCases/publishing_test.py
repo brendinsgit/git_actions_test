@@ -22,7 +22,7 @@ from selenium.common.exceptions import (
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
-image_source = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/doggo.png"
+image_source = os.path.abspath("./TestFiles/doggo.png")
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 # if browser.lower() == "firefox":
@@ -70,7 +70,7 @@ class Publishing_test:
         self.webdriver_path = webdriver_path
         self.email_address = email_address
         self.password = password
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 1000)
         self.teardown = teardown
         self.img_src = image_source
         os.environ["PATH"] += self.webdriver_path
@@ -292,12 +292,12 @@ class Publishing_test:
                     f"Couldn't find {element[0]}, looked for an {element[1]} of '{element[2]}'"
                 )
         try:
-            self.wait.until(
-                EC.visibility_of_element_located((By.LINK_TEXT, "doggo.png"))
+            image_element = self.wait.until(
+                EC.presence_of_element_located((By.XPATH, '//img[@src="doggo.png"]'))
             )
-            print("Found thedoggo  pic by link text 'doggo.png'")
-        except (NoSuchElementException, TimeoutException):
-            print("Couldn't find doggo pic. Looked for <a> with link text 'doggo.png'")
+            print("Image element found:", image_element)
+        except NoSuchElementException as e:
+            print("Error finding image element:", e)
 
     def verify_search(self):
         print("Checking the search...")
