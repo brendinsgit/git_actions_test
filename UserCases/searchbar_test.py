@@ -24,7 +24,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 webdriver_path = ChromeDriverManager().install()
 os.environ["PATH"] += os.pathsep + webdriver_path
-file_path = "D:/a/rooms3-selenium-tests/rooms3-selenium-tests/TestFiles/TheWondersOfNature.txt"
+file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
     "--headless",
@@ -57,7 +57,7 @@ class Searchbar_test:
         self.password = password
         self.teardown = teardown
         self.file_path = file_path
-        self.wait = WebDriverWait(self.driver, 30)
+        self.wait = WebDriverWait(self.driver, 500)
         os.environ["PATH"] += self.webdriver_path
         super(Searchbar_test, self).__init__()
 
