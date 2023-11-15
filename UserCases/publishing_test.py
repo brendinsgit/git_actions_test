@@ -17,7 +17,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     WebDriverException,
 )
-
+print(os.path.abspath("./TestFiles/doggo.png"))
 #browser = input("Enter your preferred browser (Firefox, Edge or Chrome): ")
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
