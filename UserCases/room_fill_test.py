@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-import os
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.color import Color
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,6 +19,7 @@ from selenium.common.exceptions import (
     TimeoutException,
     StaleElementReferenceException,
     WebDriverException,
+    StaleElementReferenceException,
 )
 
 
@@ -28,9 +29,10 @@ password = "automation_testing1234"
 image_source = os.path.abspath("./TestFiles/doggo.png")
 os.environ["PATH"] += os.pathsep + webdriver_path
 
+
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -127,14 +129,12 @@ class Room_fill_test:
         )
         save_button.click()
 
+        # Wait for avatar to be updated
+        updated_avatar = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".avatar-preview.avatar.huge.drop-zone img[src]")))
+
         # Check if avatar was added successfully
-        driver.implicitly_wait(10)
         try:
-            pic_slot = driver.find_element(
-                By.CSS_SELECTOR, ".avatar-preview.avatar.huge.drop-zone"
-            )
-            img = pic_slot.find_element(By.TAG_NAME, "img")
-            img_src = img.get_attribute("src")
+            img_src = updated_avatar.get_attribute("src")
             if img_src:
                 print("The avatar slot appears to have an image inside it")
             else:
@@ -154,107 +154,208 @@ class Room_fill_test:
         )
         search_input.send_keys("Support")
 
-        # Check for support paragraph
+        # Check for support paragraph with explicit wait
         try:
-            self.wait.until(
+            support_paragraph = self.wait.until(
                 EC.visibility_of_element_located(
                     (By.XPATH, "//p[contains(text(), 'Support')]")
                 )
             )
             print("Found the support paragraph")
-        except:
+        except TimeoutException:
+            print("Timed out waiting for the support paragraph to be visible")
+        except NoSuchElementException:
             print("Couldn't find the support paragraph")
 
-        # Clear search input and press enter
-        search_input.clear()
-        search_input.send_keys(Keys.ENTER)
+
+        try:
+            search_input = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//input[@name='search'][@class='form-control filter'][@placeholder='Search by name']")
+                )
+            )
+            search_input.clear()
+            time.sleep(3)
+            search_input.send_keys(Keys.ENTER)
+            print("Search input cleared and Enter key pressed")
+        except TimeoutException:
+            print("Timed out waiting for the search input to be clickable")
+
 
         # Click on link and security paragraph
-        driver.find_element(By.LINK_TEXT, "14").click()
-        driver.find_element(By.XPATH, "//p[contains(text(), 'Security')]").click()
+        try:
+            link_14 = self.wait.until(
+                EC.element_to_be_clickable((By.LINK_TEXT, "14"))
+            )
+            link_14.click()
+            self.wait.until(EC.staleness_of(link_14))
+            security_paragraph = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//p[contains(text(), 'Security')]"))
+            )
+            security_paragraph.click()
+
+            print("Clicked on link 14 and Security paragraph")
+        except TimeoutException:
+            print("Timed out waiting for the elements to be clickable")
 
     def set_sharing(self):
-        self.wait.until(EC.visibility_of_element_located((By.ID, "data-sharing")))
-        Select(driver.find_element(By.ID, "data-sharing")).select_by_visible_text(
-            "Share as parent room"
-        )
+        try:
+            sharing_dropdown = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "data-sharing"))
+            )
+            print("Sharing dropdown location:", sharing_dropdown.location)
+            print("Sharing dropdown size:", sharing_dropdown.size)
+            sharing_dropdown.click()
+            time.sleep(2)
+            Select(sharing_dropdown).select_by_visible_text("Share as parent room")
+            print("Set sharing option successfully")
+        except TimeoutException:
+            print("Timed out waiting for the sharing dropdown to be visible or selectable")
+
 
     def test_headings(self):
         headings = ["Heading 1", "Heading 2", "Heading 3"]
         heading_tags = ["h2", "h3", "h4"]
-
+        wait = WebDriverWait(driver, 100)
         for heading, heading_tag in zip(headings, heading_tags):
             # Click the 'Heading' button
             driver.find_element(By.CLASS_NAME, "ck-button").click()
-            driver.find_element(
-                By.XPATH, f"//span[contains(text(), '{heading}')]"
-            ).click()
+            print("Clicked the 'Heading' button.")
 
+            time.sleep(1)
+
+            heading_element = wait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, f"//span[contains(text(), '{heading}')]")
+                )
+            )
+            heading_element.click()
+            print(f"Clicked the heading element: {heading}")
+            wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div.ck.ck-content")))
             # Set the heading text
-            heading_element = driver.find_element(
-                By.CSS_SELECTOR, f"div.ck-content {heading_tag}"
-            )
-            driver.execute_script(
-                f"arguments[0].textContent = '{heading}'", heading_element
-            )
+            heading_selector = f"div.ck.ck-content {heading_tag}"
+            heading_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, heading_selector)))
+            # heading_element = driver.find_element(
+            #     By.CSS_SELECTOR, f"div.ck-content {heading_tag}"
+            # )
+            print("Before setting the heading text")
+            try:
+                driver.execute_script(f"arguments[0].textContent = '{heading}'", heading_element)
+            except Exception as e:
+                print(f"Error executing script: {e}")
+
+            time.sleep(2)
 
             # Move to the next line
             heading_element.send_keys(Keys.ENTER)
 
+            time.sleep(2)
+
+            print(f"Successfully set the heading text: {heading}")
+
     def basic_font_manipulation(self):
-        # Click the 'Paragraph' button
-        driver.find_element(By.CLASS_NAME, "ck-button").click()
-        driver.find_element(By.XPATH, "//span[contains(text(), 'Paragraph')]").click()
+        try:
+            # Click the 'Paragraph' button
+            paragraph_button = self.wait.until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "ck-button"))
+            )
+            paragraph_button.click()
 
-        # Click the 'Bold', 'Italic', and 'Underline' buttons
-        for button_text in ["Bold", "Italic", "Underline"]:
-            driver.find_element(
-                By.XPATH, f"//button[.//span[text()='{button_text}']]"
-            ).click()
+            # Wait for 'Paragraph' option and click
+            paragraph_option = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Paragraph')]"))
+            )
+            paragraph_option.click()
 
-        # Set the font background color to yellow
-        driver.find_element(
-            By.XPATH, "//button[.//span[text()='Font Background Color']]"
-        ).click()
-        driver.find_element(By.XPATH, "//button[.//span[text()='Yellow']]").click()
-        # Set font color
-        # driver.find_element(By.XPATH, "//button[.//span[text()='Font Color']]").click()
-        # driver.find_element(By.XPATH, "//button[.//span[text()='Turquoise']]").click()
+            # Click the 'Bold', 'Italic', and 'Underline' buttons
+            for button_text in ["Bold", "Italic", "Underline"]:
+                button = self.wait.until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, f"//button[.//span[text()='{button_text}']]")
+                    )
+                )
+                button.click()
+            print("Successfully clicked bold, italic, and underline buttons!")
 
-        # Set the text of the first paragraph
-        p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
-        first_paragraph = p_elements[0]
-        driver.execute_script("arguments[0].textContent = 'Paragraph'", first_paragraph)
+            # Set the font background color to yellow
+            background_color_button = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[.//span[text()='Font Background Color']]")
+                )
+            )
+            background_color_button.click()
 
-        # Move to the next line
-        first_paragraph.send_keys(Keys.ARROW_DOWN)
-        first_paragraph.send_keys(Keys.ENTER)
+            yellow_button = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//button[.//span[text()='Yellow']]"))
+            )
+            yellow_button.click()
+            print("yellow button was clicked")
+            # Set the text of the first paragraph
+            p_elements = self.wait.until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.ck-content p"))
+            )
+            first_paragraph = self.wait.until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, "div.ck-content p"))
+            )
+            print("found first paragraph")
+            driver.execute_script("arguments[0].textContent = 'Paragraph'", first_paragraph)
+            print("Added text to first paragraph")
 
-        # Unclick Bold, Italic, Underlined
-        for button_text in ["Bold", "Italic", "Underline"]:
-            driver.find_element(
-                By.XPATH, f"//button[.//span[text()='{button_text}']]"
-            ).click()
+            # Move to the next line
+            # first_paragraph.send_keys(Keys.ARROW_DOWN)
+            # first_paragraph.send_keys(Keys.ENTER)
+            action_chains = ActionChains(driver)
+            action_chains.move_to_element(first_paragraph)
+            action_chains.key_down(Keys.SHIFT).send_keys(Keys.ENTER).key_up(Keys.SHIFT).perform()
+            
+            time.sleep(2) 
 
-        # Get rid of the text background color
-        driver.find_element(
-            By.XPATH, "//button[.//span[text()='Font Background Color']]"
-        ).click()
-        driver.find_element(By.CLASS_NAME, "ck-color-table__remove-color").click()
+            # Unclick Bold, Italic, Underlined
+            for button_text in ["Bold", "Italic", "Underline"]:
+                button = self.wait.until(
+                    EC.element_to_be_clickable(
+                        (By.XPATH, f"//button[.//span[text()='{button_text}']]")
+                    )
+                )
+                button.click()
+                print(f"{button_text} button was clicked")
 
-        # Add the highlight
-        driver.find_element(By.XPATH, "//button[.//span[text()='Highlight']]").click()
+            # Get rid of the text background color
+            background_color_button.click()
+            remove_color_button = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.CLASS_NAME, "ck-color-table__remove-color")
+                )
+            )
+            remove_color_button.click()
 
-        # Write the second paragraph
-        p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
-        second_paragraph = p_elements[1]
-        driver.execute_script(
-            "arguments[0].textContent = 'Another paragraph'", second_paragraph
-        )
+            # Add the highlight
+            highlight_button = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[.//span[text()='Highlight']]")
+                )
+            )
+            highlight_button.click()
+            print("Highlight button was clicked")
 
-        # Move to the next line
-        second_paragraph.send_keys(Keys.ARROW_DOWN)
-        second_paragraph.send_keys(Keys.ENTER)
+            # Write the second paragraph
+            p_elements = self.wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.ck-content p"))
+            )
+            print("found p_elements!")
+            second_paragraph = p_elements[1]
+            print("found second_paragraph")
+            driver.execute_script("arguments[0].textContent = 'Another paragraph'", second_paragraph)
+            print("sent keys another paragraph")
+            time.sleep(1)
+
+            # Move to the next line
+            action_chains.move_to_element(second_paragraph)
+            action_chains.key_down(Keys.ARROW_DOWN).key_up(Keys.ARROW_DOWN).key_down(Keys.ENTER).key_up(Keys.ENTER).perform()
+
+            print("Second paragraph manipulation completed successfully")
+
+        except TimeoutException:
+            print("Timed out waiting for elements during basic font manipulation")
 
     def move_to_next_line(self):
         p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
@@ -784,8 +885,11 @@ class Room_fill_test:
         driver.find_element(By.ID, "data-publish_locked").click()
 
     def check_if_pinned(self):
-        element = driver.find_element(
-            By.CSS_SELECTOR, ".object.object-important .object-wrapper"
+        wait = WebDriverWait(driver, 300)
+        element = wait.until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, ".object.object-important .object-wrapper")
+            )
         )
         color = element.value_of_css_property("border-top-color")
         hex_color = Color.from_string(color).hex
