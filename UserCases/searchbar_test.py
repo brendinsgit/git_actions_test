@@ -27,7 +27,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
-    # "--headless",
+    "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",

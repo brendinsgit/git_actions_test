@@ -28,7 +28,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -578,13 +578,21 @@ if __name__ == "__main__":
             "Positive thinking is the practice of focusing on the good in any situation and maintaining a positive outlook on life. It has been shown to have numerous benefits for our mental and physical health.",
         )
         bot.go_to_sidebar_theme_test()
+        print("go_to_sidebar_theme_test() completed successfully")
         bot.open_website_publishing()
+        print("open_website_publishing() completed successfully")
         bot.edit_appearance_and_publish()
+        print("edit_appearance_and_publish() completed successfully")
         bot.verify_published_homepage()
+        print("verify_published_homepage() completed successfully")
         bot.verify_benefits_subroom()
+        print("verify_benefits_subroom() completed successfully")
         bot.verify_creative_expression_subroom()
+        print("verify_creative_expression_subroom() completed successfully")
         bot.verify_mindful_eating_subroom()
+        print("verify_mindful_eating_subroom() completed successfully")
         bot.verify_nesting()
+        print("verify_nesting() completed successfully")
         # bot.verify_search() Can't interact with search-bar
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
