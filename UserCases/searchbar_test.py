@@ -27,7 +27,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -202,11 +202,9 @@ class Searchbar_test:
         )
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
 
-    def add_file(self):
+    def add_file(self, file_path):
         self.wait.until(
-            EC.invisibility_of_element_located(
-                (By.XPATH, "//div[@class='form-overlay']")
-            )
+            EC.invisibility_of_element_located((By.XPATH, "//div[@class='form-overlay']"))
         )
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
@@ -215,15 +213,40 @@ class Searchbar_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
-        self.wait.until(
+        print("modal backdrop fade disappeared successfully")
+        # Wait for the files toggle to be clickable
+        files_toggle = self.wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
-        ).click()
-        driver.find_element(By.LINK_TEXT, "Add files").click()
-        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(file_path)
+        )
+        print("files toggle is clickable")
+
+        # Click the files toggle using JavaScript
+        self.driver.execute_script("arguments[0].click();", files_toggle)
+        print("files toggle clicked")
+
+        # Click on "Add files"
+        add_files_link = self.driver.find_element(By.LINK_TEXT, "Add files")
+        self.driver.execute_script("arguments[0].click();", add_files_link)
+        print("files added")
+
+        # Find the input element for file upload
+        file_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, "//input[@type='file']"))
+        )
+        print("input element for file upload found")
+
+        # Send the file path to the input element
+        file_input.send_keys(file_path)
+        print("file path sent to the input element")
+
+        # Click on OK
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
         ).click()
-        driver.back()
+
+        # Navigate back (assuming you want to go back after adding the file)
+        self.driver.back()
+        print("Successfully navigated back")
 
     def check_element_presence(self, xpath):
         """Check if an element with the given xpath is present on the page."""
@@ -272,8 +295,8 @@ class Searchbar_test:
             button.click()
 
         driver.find_element(By.ID, "search-rooms-input").clear()
-        # driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
-        # print("Checking if tile shows up after typing in the name 'い')...")
+        driver.find_element(By.ID, "search-rooms-input").send_keys("Test")
+        print("Checking if tile shows up after typing in the name 'い')...")
         self.check_element_presence(
             "//div[@class='search-items__item-title' and text()='Test task']"
         )
@@ -319,8 +342,11 @@ if __name__ == "__main__":
         bot.create_tile("い", "いいいいいいいいいいいいいい")
         print("Creating a task...")
         bot.create_task("Test task")
-        bot.add_file()
+        print("Created test task")
+        bot.add_file(file_path)
+        print("Added file")
         bot.verify_everything()
+        print("Everything has been verified")
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
     except ElementNotInteractableException as e:
