@@ -22,7 +22,7 @@ print(os.path.abspath("./TestFiles/doggo.png"))
 webdriver_path = ChromeDriverManager().install()
 email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
-image_source = os.path.abspath("./TestFiles/doggo.png")
+image_source = os.path.abspath("/TestFiles/doggo.png")
 os.environ["PATH"] += os.pathsep + webdriver_path
 
 # if browser.lower() == "firefox":
