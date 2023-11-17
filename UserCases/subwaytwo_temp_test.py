@@ -253,22 +253,35 @@ class Subwaytwo_template_test:
         print("Created forbidden tile")
 
     def go_to_subway_theme_test(self):
+        print("Waiting for form overlay to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
             )
         )
+        print("Form overlay disappeared.")
+
+        print("Waiting for modal fade to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
         )
+        print("Modal fade disappeared.")
+
+        print("Waiting for modal-backdrop fade to disappear...")
         # Wait for the modal-backdrop fade to disappear
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
+        print("Modal-backdrop fade disappeared.")
+
+        print("Clicking on 'Subway theme test' breadcrumb...")
         driver.find_element(
             By.XPATH,
             "//span[@class='breadcrumb-label' and text()='Subway theme test']",
         ).click()
+        print("Clicked on 'Subway theme test' breadcrumb.")
+
+        print("Waiting for 'Subway theme test' span to be visible...")
         self.wait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//span[contains(text(), 'Subway theme test')]")
@@ -276,6 +289,7 @@ class Subwaytwo_template_test:
         )
         print("Went to subway theme test")
         time.sleep(5)
+        print("Went to subway theme test.")
 
     def open_website_publishing(self):
         self.wait.until(

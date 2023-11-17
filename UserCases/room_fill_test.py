@@ -496,17 +496,17 @@ class Room_fill_test:
             )
         ).click()
 # ///////////////////////////////////////////////////////////////////////////////
-    # This character may be causing issue
+    # One or more special characters may be causing error in github actions
         # Set the text of the last paragraph to '₠'
-        # last_paragraph = set_last_paragraph_text("₠")
+        last_paragraph = set_last_paragraph_text("Y")
+        print("last paragraph set to Y")
 
         # Move to the next line
-        # last_paragraph.send_keys(Keys.ARROW_DOWN)
-        # last_paragraph.send_keys(Keys.ENTER)
-# ///////////////////////////////////////////////////////////////////////////////////
+        last_paragraph.send_keys(Keys.ARROW_DOWN)
+        last_paragraph.send_keys(Keys.ENTER)
         # Click the 'Strikethrough' button
         click_button("Strikethrough")
-
+        print("strikethrough button clicked")
         # Set the text of the last paragraph to 'Crossed out text'
         last_paragraph = set_last_paragraph_text("Crossed out text")
         print("crossed out text")
