@@ -430,18 +430,17 @@ class Room_fill_test:
             last_paragraph.send_keys(Keys.ARROW_DOWN)
             last_paragraph.send_keys(Keys.ENTER)
 
-    # def extra_items(self):
-    #     def click_button(button_text):
-    #         driver.find_element(
-    #             By.XPATH, f"//button[.//span[text()='{button_text}']]"
-    #         ).click()
+    def extra_items(self):
+        def click_button(button_text):
+            driver.find_element(
+                By.XPATH, f"//button[.//span[text()='{button_text}']]"
+            ).click()
 
         def set_last_paragraph_text(text):
             p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
             last_paragraph = p_elements[-1]
-            driver.execute_script(
-                f"arguments[0].textContent = '{text}'", last_paragraph
-            )
+            encoded_text = text.encode('utf-8').decode('utf-8')
+            driver.execute_script(f"arguments[0].textContent = '{encoded_text}'", last_paragraph)
             return last_paragraph
 
         click_button("Show more items")
@@ -495,11 +494,10 @@ class Room_fill_test:
                 (By.XPATH, "//button[.//span[text()='Special characters']]")
             )
         ).click()
-# ///////////////////////////////////////////////////////////////////////////////
-    # One or more special characters may be causing error in github actions
+
         # Set the text of the last paragraph to '₠'
-        last_paragraph = set_last_paragraph_text("Y")
-        print("last paragraph set to Y")
+        last_paragraph = set_last_paragraph_text("₠")
+        print("last paragraph set to ₠")
 
         # Move to the next line
         last_paragraph.send_keys(Keys.ARROW_DOWN)
@@ -589,11 +587,11 @@ class Room_fill_test:
             )
         ).send_keys("test tile")
 
-    # def extra_items_tile(self):
-    #     def click_button(button_text):
-    #         driver.find_element(
-    #             By.XPATH, f"//button[.//span[text()='{button_text}']]"
-    #         ).click()
+    def extra_items_tile(self):
+        def click_button(button_text):
+            driver.find_element(
+                By.XPATH, f"//button[.//span[text()='{button_text}']]"
+            ).click()
 
         def set_last_paragraph_text(text):
             p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
@@ -961,7 +959,7 @@ if __name__ == "__main__":
         bot.move_to_next_line()
         bot.text_alignment()
         bot.move_to_next_line()
-        # bot.extra_items()
+        bot.extra_items()
         bot.test_table()
         bot.finish_room()
 
@@ -974,7 +972,7 @@ if __name__ == "__main__":
         bot.link()
         bot.move_to_next_line()
         bot.text_alignment()
-        # bot.extra_items_tile()
+        bot.extra_items_tile()
         bot.test_table()
         bot.finish_tile()
         print("TILE RESULTS")
