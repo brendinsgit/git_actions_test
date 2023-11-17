@@ -1,5 +1,6 @@
 import os
 import time
+import sys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -28,7 +29,7 @@ email_address = "max.gapa+automation_tests@kenja.com"
 password = "automation_testing1234"
 image_source = os.path.abspath("./TestFiles/doggo.png")
 os.environ["PATH"] += os.pathsep + webdriver_path
-
+sys.stdout.reconfigure(encoding='utf-8')
 
 chrome_options = Options()
 options = [
