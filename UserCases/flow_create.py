@@ -152,6 +152,8 @@ class Flow_create:
             EC.visibility_of_element_located((By.XPATH, "//*[@id='result-container']/div/div[1]/div[1]/div/span"))
         )
         time.sleep(0.5)
+        
+    def delete_flow(self):
         if self.driver.find_element(By.XPATH, "//*[@id='result-container']/div/div[1]/div[1]/div/span").text  == "flow_test":
             self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//*[@id='result-container']/div/div[1]/div[1]/div/div/a"))
@@ -166,8 +168,13 @@ bot = Flow_create()
 if __name__ == "__main__":
     try:
         bot.login()
+        print("login() completed successfully")
         bot.navigate_create_flow()
+        print("navigate_create_flow() completed successfully")
         bot.create_first_flow()
+        print("create_first_flow() completed successfully")
+        bot.delete_flow()
+        print("delete_flow() completed successfully")
         
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
