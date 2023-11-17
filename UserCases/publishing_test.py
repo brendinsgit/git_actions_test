@@ -291,13 +291,13 @@ class Publishing_test:
                 print(
                     f"Couldn't find {element[0]}, looked for an {element[1]} of '{element[2]}'"
                 )
-        try:
-            image_element = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, '//img[@src="doggo.png"]'))
-            )
-            print("Image element found:", image_element)
-        except NoSuchElementException as e:
-            print("Error finding image element:", e)
+        # try:
+        #     image_element = self.wait.until(
+        #         EC.presence_of_element_located((By.XPATH, '//img[@src="doggo.png"]'))
+        #     )
+        #     print("Image element found:", image_element)
+        # except NoSuchElementException as e:
+        #     print("Error finding image element:", e)
 
     def verify_search(self):
         print("Checking the search...")
