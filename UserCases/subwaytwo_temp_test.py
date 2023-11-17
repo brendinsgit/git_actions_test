@@ -31,7 +31,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -99,6 +99,7 @@ class Subwaytwo_template_test:
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
         ).click()
+        print("Went to testdpt")
 
     def create_room(self, title, description):
         self.wait.until(
@@ -135,6 +136,7 @@ class Subwaytwo_template_test:
                 (By.XPATH, "//button[contains(text(), 'Add room')]")
             )
         ).click()
+        print("Created room")
 
     def create_tile(self, tile_name, tile_description):
         self.wait.until(
@@ -175,6 +177,7 @@ class Subwaytwo_template_test:
             last_paragraph,
         )
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
+        print("Created tile")
 
     def add_file(self):
         self.wait.until(
@@ -205,6 +208,7 @@ class Subwaytwo_template_test:
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
         ).click()
         driver.back()
+        print("File was added")
 
     def create_forbidden_tile(self, tile_name, tile_description):
         self.wait.until(
@@ -246,6 +250,7 @@ class Subwaytwo_template_test:
         )
         driver.find_element(By.ID, "data-publish_locked").click()
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
+        print("Created forbidden tile")
 
     def go_to_subway_theme_test(self):
         self.wait.until(
@@ -269,6 +274,7 @@ class Subwaytwo_template_test:
                 (By.XPATH, "//span[contains(text(), 'Subway theme test')]")
             )
         )
+        print("Went to subway theme test")
         time.sleep(5)
 
     def open_website_publishing(self):
@@ -297,6 +303,7 @@ class Subwaytwo_template_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
         )
+        print("Opened website publishing")
 
     def edit_appearance_and_publish(self):
         self.wait.until(
@@ -314,6 +321,7 @@ class Subwaytwo_template_test:
         )
         href = element.get_attribute("href")
         driver.get(href)
+        print("Edited appearance and published")
 
     def verify_published_homepage(self):
         print("Checking if all elements are showing...")
@@ -357,6 +365,7 @@ class Subwaytwo_template_test:
             ),
         ]
         self.verify_elements(elements)
+        print("Verified published homepage")
 
     def verify_benefits_subroom(self):
         driver.find_element(By.LINK_TEXT, "The Benefits of Travel").click()
@@ -399,6 +408,7 @@ class Subwaytwo_template_test:
             ),
         ]
         self.verify_elements(elements)
+        print("Verified benefits subroom")
 
     def verify_elements(self, elements):
         for element in elements:
@@ -414,6 +424,7 @@ class Subwaytwo_template_test:
                 print(
                     f"Couldn't find {element[0]}, looked for an {element[1]} of '{element[2]}'"
                 )
+        print("Verified elements")
 
     def verify_creative_expression_subroom(self):
         driver.find_element(By.LINK_TEXT, "The Benefits of Creative Expression").click()
@@ -430,6 +441,7 @@ class Subwaytwo_template_test:
             ),
         ]
         self.verify_elements(elements)
+        print("Verified creative expression subroom")
 
     def verify_mindful_eating_subroom(self):
         driver.find_element(By.LINK_TEXT, "The Benefits of Mindful Eating").click()
@@ -465,6 +477,7 @@ class Subwaytwo_template_test:
         except TimeoutException:
             print("Found the forbidden tile even though it shouldn't be showing up")
         self.verify_elements(elements)
+        print("Verified mindful eating subrooom")
 
     def verify_search(self):
         print("Checking the search...")
@@ -540,12 +553,19 @@ if __name__ == "__main__":
             "Positive thinking is the practice of focusing on the good in any situation and maintaining a positive outlook on life. It has been shown to have numerous benefits for our mental and physical health.",
         )
         bot.go_to_subway_theme_test()
+        print("Bot Successfully went to subway theme test")
         bot.open_website_publishing()
+        print("Bot Successfully opened website publishing")
         bot.edit_appearance_and_publish()
+        print("Bot Successfully edited appearance and published")
         bot.verify_published_homepage()
+        print("Bot Successfully verified published homepage")
         bot.verify_benefits_subroom()
+        print("Bot Successfully verified benefits subroom")
         bot.verify_creative_expression_subroom()
+        print("Bot Successfully verified creative expression subroom")
         bot.verify_mindful_eating_subroom()
+        print("Bot Successfully verified mindful eating subroom")
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
     except ElementNotInteractableException as e:

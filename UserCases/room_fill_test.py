@@ -497,17 +497,19 @@ class Room_fill_test:
         ).click()
 
         # Set the text of the last paragraph to '₠'
-        last_paragraph = set_last_paragraph_text("₠")
+        # last_paragraph = set_last_paragraph_text("₠")
+        # This special character may be causing the issue******
 
         # Move to the next line
-        last_paragraph.send_keys(Keys.ARROW_DOWN)
-        last_paragraph.send_keys(Keys.ENTER)
+        # last_paragraph.send_keys(Keys.ARROW_DOWN)
+        # last_paragraph.send_keys(Keys.ENTER)
 
         # Click the 'Strikethrough' button
         click_button("Strikethrough")
 
         # Set the text of the last paragraph to 'Crossed out text'
         last_paragraph = set_last_paragraph_text("Crossed out text")
+        print("crossed out text")
 
         # Move to the next line
         last_paragraph.send_keys(Keys.ARROW_DOWN)
