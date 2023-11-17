@@ -497,11 +497,11 @@ class Room_fill_test:
         ).click()
 
         # Set the text of the last paragraph to '₠'
-        last_paragraph = set_last_paragraph_text("₠")
+        #last_paragraph = set_last_paragraph_text("₠")
 
         # Move to the next line
-        last_paragraph.send_keys(Keys.ARROW_DOWN)
-        last_paragraph.send_keys(Keys.ENTER)
+        #last_paragraph.send_keys(Keys.ARROW_DOWN)
+        #last_paragraph.send_keys(Keys.ENTER)
 
         # Click the 'Strikethrough' button
         click_button("Strikethrough")
