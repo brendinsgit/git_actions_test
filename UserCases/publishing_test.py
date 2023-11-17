@@ -356,13 +356,21 @@ bot = Publishing_test()
 if __name__ == "__main__":
     try:
         bot.login()
+        print("login() completed successfully")
         bot.create_room()
+        print("create_room() completed successfully")
         bot.create_first_tile()
+        print("create_first_tile() completed successfully")
         bot.create_second_tile()
+        print("create_second_tile() completed successfully")
         bot.add_file()
+        print("add_file() completed successfully")
         bot.publish_room()
+        print("publish_room() completed successfully")
         bot.verify_published_page()
+        print("verify_published_page() completed successfully")
         bot.verify_search()
+        print("verify_search() completed successfully")
 
     except NoSuchElementException as e:
         print(f"Failed to find and/or use the element: {e.msg}")
