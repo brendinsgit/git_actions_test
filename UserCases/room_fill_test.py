@@ -439,8 +439,11 @@ class Room_fill_test:
         def set_last_paragraph_text(text):
             p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
             last_paragraph = p_elements[-1]
-            encoded_text = text.encode('utf-8').decode('utf-8')
-            driver.execute_script(f"arguments[0].textContent = '{encoded_text}'", last_paragraph)
+            try:
+                encoded_text = text.encode('utf-8').decode('utf-8')
+                driver.execute_script(f"arguments[0].textContent = '{encoded_text}'", last_paragraph)
+            except UnicodeEncodeError:
+                print("Error encoding special character. Cannot display in the console.")
             return last_paragraph
 
         click_button("Show more items")
