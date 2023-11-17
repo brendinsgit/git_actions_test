@@ -31,7 +31,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -99,59 +99,91 @@ class Subway_template_test:
         ).click()
 
     def create_room(self, title, description):
+        print("Waiting for form overlay to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
             )
         )
+        print("Form overlay disappeared.")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
         )
+        print("Modal fade disappeared.")
+
         # Wait for the modal-backdrop fade to disappear
+        print("Waiting for modal-backdrop fade to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
+        print("Modal-backdrop fade disappeared.")
+
+        print("Clicking on the 'plus' icon...")
         self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
+        print("Clicked on the 'plus' icon.")
+
+        print("Clicking on 'Add sub room'...")
         self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//*[contains(text(), 'Add sub room')]")
             )
         ).click()
+        print("Clicked on 'Add sub room'.")
+
+        print("Entering room title...")
         self.wait.until(EC.element_to_be_clickable((By.NAME, "data[name]"))).send_keys(
             title
         )
+        print("Entered room title.")
+
+        print("Entering room description...")
         p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
         last_paragraph = p_elements[-1]
         driver.execute_script(
             f"arguments[0].textContent = '{description}'",
             last_paragraph,
         )
+        print("Entered room description.")
+
+        print("Clicking on 'Add room' button...")
         self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[contains(text(), 'Add room')]")
             )
         ).click()
+        print("Clicked on 'Add room' button.")
 
     def create_tile(self, tile_name, tile_description):
+        print("Waiting for form overlay to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
             )
         )
+        print("Form overlay disappeared.")
+
+        print("Waiting for modal fade to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
         )
+        print("Modal fade disappeared.")
+
         # Wait for the modal-backdrop fade to disappear
+        print("Waiting for modal-backdrop fade to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
+        print("Modal-backdrop fade disappeared.")
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
+        print("Clicking on the 'plus' icon...")
         self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
+        print("Clicked on the 'plus' icon.")
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
+        print("Clicking on the 'New tile can contain description...' message...")
         self.wait.until(
             EC.element_to_be_clickable(
                 (
@@ -160,48 +192,82 @@ class Subway_template_test:
                 )
             )
         ).click()
+        print("Clicked on the 'New tile can contain description...' message.")
         # Input Tile Name
+        print("Inputting Tile Name...")
         self.wait.until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, "input#data-name.form-control")
             )
         ).send_keys(tile_name)
+        print("Entered Tile Name.")
+
+        print("Entering tile description...")
         p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
         last_paragraph = p_elements[-1]
         driver.execute_script(
             f"arguments[0].textContent = '{tile_description}'",
             last_paragraph,
         )
+        print("Entered tile description.")
+
+        print("Clicking on 'Add tile' button...")
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
+        print("Clicked on 'Add tile' button.")
 
     def add_file(self):
+        print("Waiting for form overlay to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
             )
         )
+        print("Form overlay disappeared.")
+
+        print("Waiting for modal fade to disappear...")
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
         )
+        print("Modal fade disappeared.")
+
+        print("Waiting for modal-backdrop fade to disappear...")
         # Wait for the modal-backdrop fade to disappear
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
+        print("Modal-backdrop fade disappeared.")
+
+
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
+        print("Clicking on the 'plus' icon...")
         self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
         ).click()
+        print("Clicked on the 'plus' icon.")
         time.sleep(1)
+
+        print("Clicking on 'Files' toggle...")
         self.wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
         ).click()
+        print("Clicked on 'Files' toggle.")
+
+        print("Clicking on 'Add files' link...")
         driver.find_element(By.LINK_TEXT, "Add files").click()
+        print("Clicked on 'Add files' link.")
+
+        print("Uploading file...")
         driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
             f"{self.file_path}"
         )
+        print("File uploaded.")
+
+        print("Clicking on 'OK' button...")
         self.wait.until(
             EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
         ).click()
+        print("Clicked on 'OK' button.")
+        
         driver.back()
 
     def create_forbidden_tile(self, tile_name, tile_description):
