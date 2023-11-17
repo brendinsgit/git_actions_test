@@ -430,11 +430,11 @@ class Room_fill_test:
             last_paragraph.send_keys(Keys.ARROW_DOWN)
             last_paragraph.send_keys(Keys.ENTER)
 
-    def extra_items(self):
-        def click_button(button_text):
-            driver.find_element(
-                By.XPATH, f"//button[.//span[text()='{button_text}']]"
-            ).click()
+    # def extra_items(self):
+    #     def click_button(button_text):
+    #         driver.find_element(
+    #             By.XPATH, f"//button[.//span[text()='{button_text}']]"
+    #         ).click()
 
         def set_last_paragraph_text(text):
             p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
@@ -589,11 +589,11 @@ class Room_fill_test:
             )
         ).send_keys("test tile")
 
-    def extra_items_tile(self):
-        def click_button(button_text):
-            driver.find_element(
-                By.XPATH, f"//button[.//span[text()='{button_text}']]"
-            ).click()
+    # def extra_items_tile(self):
+    #     def click_button(button_text):
+    #         driver.find_element(
+    #             By.XPATH, f"//button[.//span[text()='{button_text}']]"
+    #         ).click()
 
         def set_last_paragraph_text(text):
             p_elements = driver.find_elements(By.CSS_SELECTOR, "div.ck-content p")
@@ -961,7 +961,7 @@ if __name__ == "__main__":
         bot.move_to_next_line()
         bot.text_alignment()
         bot.move_to_next_line()
-        bot.extra_items()
+        # bot.extra_items()
         bot.test_table()
         bot.finish_room()
 
@@ -974,7 +974,7 @@ if __name__ == "__main__":
         bot.link()
         bot.move_to_next_line()
         bot.text_alignment()
-        bot.extra_items_tile()
+        # bot.extra_items_tile()
         bot.test_table()
         bot.finish_tile()
         print("TILE RESULTS")
