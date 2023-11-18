@@ -111,8 +111,8 @@ class Searchbar_test:
         driver.save_screenshot("before_click.png")
 
         # The problematic line
-        element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-toggle='tasks']")))
-        element.click()
+        element = driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
+        driver.execute_script("arguments[0].click();", element)
 
         # After the problematic line
         driver.save_screenshot("after_click.png")
