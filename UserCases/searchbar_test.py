@@ -27,7 +27,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
-    # "--headless",
+    "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -38,6 +38,8 @@ options = [
 ]
 for option in options:
     chrome_options.add_argument(option)
+
+chrome_options.add_argument("--window-size=1920,1200")
 
 chrome_service = Service(webdriver_path)
 driver = webdriver.Chrome(options=chrome_options, service=ChromeService(ChromeDriverManager().install()))
@@ -103,9 +105,8 @@ class Searchbar_test:
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Click on tasks tab
-        element = self.driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
-        element.click()
+        # driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
+
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
         # Set the name
