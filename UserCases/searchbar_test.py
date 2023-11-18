@@ -28,7 +28,7 @@ file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
     "--headless",
-    #"--disable-gpu",
+    "--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
