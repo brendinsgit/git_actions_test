@@ -105,7 +105,16 @@ class Searchbar_test:
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Click on tasks tab
-        driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
+        # Before the problematic line
+        wait = WebDriverWait(driver, 60)
+        driver.save_screenshot("before_click.png")
+
+        # The problematic line
+        element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-toggle='tasks']")))
+        element.click()
+
+        # After the problematic line
+        driver.save_screenshot("after_click.png")
 
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
