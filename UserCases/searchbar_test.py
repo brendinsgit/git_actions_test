@@ -28,7 +28,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
-    # "--headless",
+    "--headless",
     "--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -110,7 +110,7 @@ class Searchbar_test:
         driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
         # Click on "Add new task"
         
-        driver.find_element(By.LINK_TEXT, "Add new task").click()
+        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Add new task"))).click()
 
         # Set the name
         self.wait.until(EC.element_to_be_clickable((By.ID, "data-name"))).send_keys(
