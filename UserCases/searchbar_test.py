@@ -109,11 +109,16 @@ class Searchbar_test:
         # Before the problematic line
         wait = WebDriverWait(driver, 60)
 
-        # The problematic line
-        element = driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        element.click()
+        # Identify the elements
+        target_element = driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
+        interfering_element = driver.find_element(By.CLASS_NAME, "info.container")
 
+        # Remove the interfering element from the DOM
+        driver.execute_script("arguments[0].parentNode.removeChild(arguments[0]);", interfering_element)
+
+        # Click on the target element
+        target_element.click()
+        
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
         # Set the name
