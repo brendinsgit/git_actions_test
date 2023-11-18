@@ -58,6 +58,10 @@
       - name: Run flow create
         run: python UserCases/flow_create.py
 
+        # for testing this is a duplicate so don't forget to remove after
+      - name: Run search bar test
+        run: python UserCases/searchbar_test.py
+
       - name: Run publishing test
         run: python UserCases/publishing_test.py
 

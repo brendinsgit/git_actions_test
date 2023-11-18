@@ -103,7 +103,7 @@ class Searchbar_test:
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         # Click on tasks tab
-        driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-toggle='tasks']"))).click()
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
         # Set the name
