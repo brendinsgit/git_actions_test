@@ -28,7 +28,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     "--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -105,22 +105,13 @@ class Searchbar_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
+
         # Click on tasks tab
-        # Before the problematic line
-        wait = WebDriverWait(driver, 60)
-
-        # Identify the elements
-        target_element = driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
-        interfering_element = driver.find_element(By.CLASS_NAME, "info.container")
-
-        # Remove the interfering element from the DOM
-        driver.execute_script("arguments[0].parentNode.removeChild(arguments[0]);", interfering_element)
-
-        # Click on the target element
-        target_element.click()
-        
+        driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
         # Click on "Add new task"
+        
         driver.find_element(By.LINK_TEXT, "Add new task").click()
+
         # Set the name
         self.wait.until(EC.element_to_be_clickable((By.ID, "data-name"))).send_keys(
             task_name
