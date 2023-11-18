@@ -108,14 +108,11 @@ class Searchbar_test:
         # Click on tasks tab
         # Before the problematic line
         wait = WebDriverWait(driver, 60)
-        driver.save_screenshot("before_click.png")
 
         # The problematic line
         element = driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']")
-        driver.execute_script("arguments[0].click();", element)
-
-        # After the problematic line
-        driver.save_screenshot("after_click.png")
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        element.click()
 
         # Click on "Add new task"
         driver.find_element(By.LINK_TEXT, "Add new task").click()
