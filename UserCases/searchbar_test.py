@@ -14,7 +14,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-import os
+import sys
 import time
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,6 +23,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
 webdriver_path = ChromeDriverManager().install()
+sys.stdout.reconfigure(encoding='utf-8')
 os.environ["PATH"] += os.pathsep + webdriver_path
 file_path = os.path.abspath("./TestFiles/TheWondersOfNature.txt")
 chrome_options = Options()
