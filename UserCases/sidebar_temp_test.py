@@ -111,9 +111,11 @@ class Sidebar_template_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
-        self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
+        glyphiconElement = self.wait.until(
+            EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus"))
+        )
+        self.driver.execute_script("arguments[0].click();", glyphiconElement)
+
         self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//*[contains(text(), 'Add sub room')]")

@@ -51,9 +51,6 @@
           
       - name: Install Dependencies
         run: pip install -r requirements.txt
-      
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       # for testing this is a duplicate so don't forget to remove after
       - name: Run sidebar temp test
