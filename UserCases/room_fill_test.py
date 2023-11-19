@@ -919,9 +919,11 @@ class Room_fill_test:
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
         print("Time to publish the room...")
-        self.wait.until(
-            EC.visibility_of_element_located((By.CLASS_NAME, "glyphicon-globe"))
-        ).click()
+        element = self.wait.until(
+            EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-globe"))
+        )
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        element.click()
 
         self.wait.until(
             EC.element_to_be_clickable(
