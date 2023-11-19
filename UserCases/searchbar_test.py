@@ -108,10 +108,15 @@ class Searchbar_test:
 
         # Click on tasks tab
         driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
+        console_logs = driver.execute_script("return window.console.logs;")
+        print("JavaScript Console Logs:", console_logs)
+
         # Click on "Add new task"
-        
         add_new_task_button = self.wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Add new task")))
         driver.execute_script("arguments[0].click();", add_new_task_button)
+
+        console_logs = driver.execute_script("return window.console.logs;")
+        print("JavaScript Console Logs:", console_logs)
 
         # Set the name
         self.wait.until(EC.element_to_be_clickable((By.ID, "data-name"))).send_keys(
