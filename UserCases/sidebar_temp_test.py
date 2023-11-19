@@ -195,7 +195,9 @@ class Sidebar_template_test:
         self.wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
         ).click()
-        driver.find_element(By.LINK_TEXT, "Add files").click()
+        self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Add files"))
+        ).click()
         driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
             f"{self.file_path}"
         )
