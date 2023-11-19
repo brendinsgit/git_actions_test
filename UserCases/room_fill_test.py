@@ -35,7 +35,7 @@ chrome_options = Options()
 options = [
     "--headless",
     #"--disable-gpu",
-    #"--window-size=1920,1200",
+    "--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
     "--no-sandbox",
@@ -920,7 +920,7 @@ class Room_fill_test:
         )
         print("Time to publish the room...")
         self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-globe"))
+            EC.visibility_of_element_located((By.CLASS_NAME, "glyphicon-globe"))
         ).click()
 
         self.wait.until(
