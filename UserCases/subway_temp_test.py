@@ -119,9 +119,12 @@ class Subway_template_test:
         print("Modal-backdrop fade disappeared.")
 
         print("Clicking on the 'plus' icon...")
-        self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
+        # Wait for the presence of the element
+        wait = WebDriverWait(driver, 80)
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus")))
+
+        # Wait for the element to be clickable
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))).click()
         print("Clicked on the 'plus' icon.")
 
         print("Clicking on 'Add sub room'...")
