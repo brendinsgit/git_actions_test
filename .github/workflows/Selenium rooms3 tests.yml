@@ -56,8 +56,8 @@
         uses: actions/checkout@v3
 
       # for testing this is a duplicate so don't forget to remove after
-      - name: Run sidebar temp test
-        run: python UserCases/sidebar_temp_test.py
+      - name: Run subway temp test
+        run: python UserCases/subway_temp_test.py
 
 
       - name: Run flow create
