@@ -111,10 +111,20 @@ class Sidebar_template_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
-        glyphiconElement = self.wait.until(
+        element = self.wait.until(
             EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus"))
         )
-        self.driver.execute_script("arguments[0].click();", glyphiconElement)
+        self.driver.execute_script("arguments[0].click();", element)
+        # Scroll the element into view
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+
+        # Wait for the overlapping element to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "content"))
+        )
+
+        # Trigger a click event using JavaScript
+        self.driver.execute_script("arguments[0].click();", element)
 
         self.wait.until(
             EC.element_to_be_clickable(
