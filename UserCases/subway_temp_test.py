@@ -257,8 +257,7 @@ class Subway_template_test:
 
         print("Clicking on 'Add files' link...")
         wait = WebDriverWait(driver, 80)
-        add_files_link = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "add-file")))
-        add_files_link.click()
+        wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Add files"))).click()
         print("Clicked on 'Add files' link.")
 
         print("Uploading file...")
