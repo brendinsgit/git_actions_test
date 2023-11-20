@@ -30,7 +30,7 @@ chrome_options = Options()
 options = [
     "--headless",
     #"--disable-gpu",
-    "--window-size=1920,1200",
+    #"--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
     "--no-sandbox",
@@ -111,21 +111,9 @@ class Sidebar_template_test:
         self.wait.until(
             EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
         )
-        element = self.wait.until(
-            EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus"))
-        )
-        self.driver.execute_script("arguments[0].click();", element)
-        # Scroll the element into view
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
-
-        # Wait for the overlapping element to disappear
         self.wait.until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "content"))
-        )
-
-        # Trigger a click event using JavaScript
-        self.driver.execute_script("arguments[0].click();", element)
-
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
         self.wait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//*[contains(text(), 'Add sub room')]")
@@ -207,9 +195,7 @@ class Sidebar_template_test:
         self.wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
         ).click()
-        self.wait.until(
-            EC.element_to_be_clickable((By.LINK_TEXT, "Add files"))
-        ).click()
+        driver.find_element(By.LINK_TEXT, "Add files").click()
         driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
             f"{self.file_path}"
         )
