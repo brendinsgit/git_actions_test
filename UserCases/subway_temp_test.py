@@ -120,11 +120,12 @@ class Subway_template_test:
 
         print("Clicking on the 'plus' icon...")
         # Wait for the presence of the element
-        wait = WebDriverWait(driver, 80)
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus")))
+        wait = WebDriverWait(driver, 30)  # Adjust the timeout as needed
+        plus_icon = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus")))
 
         # Wait for the element to be clickable
-        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))).click()
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus")))
+        plus_icon.click()
         print("Clicked on the 'plus' icon.")
 
         print("Clicking on 'Add sub room'...")
@@ -256,8 +257,7 @@ class Subway_template_test:
         print("Clicked on 'Files' toggle.")
 
         print("Clicking on 'Add files' link...")
-        wait = WebDriverWait(driver, 80)
-        wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Add files"))).click()
+        driver.find_element(By.LINK_TEXT, "Add files").click()
         print("Clicked on 'Add files' link.")
 
         print("Uploading file...")
