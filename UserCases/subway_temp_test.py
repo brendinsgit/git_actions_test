@@ -31,7 +31,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     # "--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -61,7 +61,7 @@ class Subway_template_test:
         self.password = password
         self.teardown = teardown
         self.file_path = file_path
-        self.wait = WebDriverWait(self.driver, 300)
+        self.wait = WebDriverWait(self.driver, 800)
         os.environ["PATH"] += self.webdriver_path
         super(Subway_template_test, self).__init__()
 
@@ -119,9 +119,11 @@ class Subway_template_test:
         print("Modal-backdrop fade disappeared.")
 
         print("Clicking on the 'plus' icon...")
-        self.wait.until(
+        element = self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
+        )
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        element.click()
         print("Clicked on the 'plus' icon.")
 
         print("Clicking on 'Add sub room'...")
@@ -178,12 +180,9 @@ class Subway_template_test:
         print("Modal-backdrop fade disappeared.")
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
         print("Clicking on the 'plus' icon...")
-        try:
-            self.wait.until(
-                EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-            ).click()
-        except StaleElementReferenceException:
-            pass
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
         print("Clicked on the 'plus' icon.")
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
         print("Clicking on the 'New tile can contain description...' message...")
