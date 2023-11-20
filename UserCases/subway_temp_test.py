@@ -178,9 +178,18 @@ class Subway_template_test:
         print("Modal-backdrop fade disappeared.")
         # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
         print("Clicking on the 'plus' icon...")
-        self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
+        retry_attempts = 3
+        for attempt in range(retry_attempts):
+            try:
+                self.wait.until(
+                    EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+                ).click()
+                break  # Break out of the loop if the click is successful
+            except TimeoutException:
+                if attempt < retry_attempts - 1:
+                    print(f"Retrying click, attempt {attempt + 1}")
+                else:
+                    raise  # Raise the exception if all attempts fail
         print("Clicked on the 'plus' icon.")
         # Finding the element by the <small> element works, but when I want to find it by picking the first li of the list it says it has to scroll it into view... weird.
         print("Clicking on the 'New tile can contain description...' message...")
