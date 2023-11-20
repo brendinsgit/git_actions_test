@@ -31,7 +31,7 @@ os.environ["PATH"] += os.pathsep + webdriver_path
 
 chrome_options = Options()
 options = [
-    "--headless",
+    # "--headless",
     #"--disable-gpu",
     #"--window-size=1920,1200",
     "--ignore-certificate-errors",
@@ -119,13 +119,9 @@ class Subway_template_test:
         print("Modal-backdrop fade disappeared.")
 
         print("Clicking on the 'plus' icon...")
-        # Wait for the presence of the element
-        wait = WebDriverWait(driver, 30)  # Adjust the timeout as needed
-        plus_icon = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "glyphicon-plus")))
-
-        # Wait for the element to be clickable
-        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus")))
-        plus_icon.click()
+        self.wait.until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
+        ).click()
         print("Clicked on the 'plus' icon.")
 
         print("Clicking on 'Add sub room'...")
