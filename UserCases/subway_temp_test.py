@@ -33,7 +33,7 @@ chrome_options = Options()
 options = [
     "--headless",
     #"--disable-gpu",
-    "--window-size=1920,1200",
+    # "--window-size=1920,1200",
     "--ignore-certificate-errors",
     "--disable-extensions",
     "--no-sandbox",
@@ -217,7 +217,8 @@ class Subway_template_test:
 
     def add_file(self):
         print("Waiting for form overlay to disappear...")
-        self.wait.until(
+        wait = WebDriverWait(driver, 80)
+        wait.until(
             EC.invisibility_of_element_located(
                 (By.XPATH, "//div[@class='form-overlay']")
             )
