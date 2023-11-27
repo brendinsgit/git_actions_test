@@ -177,11 +177,9 @@ class Searchbar_test:
             # Scroll the checkbox into view
             self.driver.execute_script("arguments[0].scrollIntoView(true);", checkbox)
 
-            # Wait for the overlay to disappear before clicking the checkbox
-            self.wait.until(
-                EC.invisibility_of_element_located((By.CLASS_NAME, "form-overlay"))
-            )
-            checkbox.click()
+            # Use ActionChains to click the checkbox
+            actions = ActionChains(self.driver)
+            actions.move_to_element(checkbox).click().perform()
             print(f"Clicked checkbox: {checkbox_name}")
 
         
