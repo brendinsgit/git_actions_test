@@ -61,7 +61,7 @@ class Subway_template_test:
         self.password = password
         self.teardown = teardown
         self.file_path = file_path
-        self.wait = WebDriverWait(self.driver, 800)
+        self.wait = WebDriverWait(self.driver, 300)
         os.environ["PATH"] += self.webdriver_path
         super(Subway_template_test, self).__init__()
 
@@ -217,61 +217,50 @@ class Subway_template_test:
         driver.find_element(By.XPATH, "//button[contains(text(), 'Add tile')]").click()
         print("Clicked on 'Add tile' button.")
 
-    def add_file(self):
-        print("Waiting for form overlay to disappear...")
-        wait = WebDriverWait(driver, 80)
-        wait.until(
-            EC.invisibility_of_element_located(
-                (By.XPATH, "//div[@class='form-overlay']")
+    def add_file(self, file_path):
+            self.wait.until(
+                EC.invisibility_of_element_located((By.XPATH, "//div[@class='form-overlay']"))
             )
-        )
-        print("Form overlay disappeared.")
+            self.wait.until(
+                EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
+            )
+            # Wait for the modal-backdrop fade to disappear
+            self.wait.until(
+                EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
+            )
+            print("modal backdrop fade disappeared successfully")
+            # Wait for the files toggle to be clickable
+            files_toggle = self.wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
+            )
+            print("files toggle is clickable")
 
-        print("Waiting for modal fade to disappear...")
-        self.wait.until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal fade"))
-        )
-        print("Modal fade disappeared.")
+            # Click the files toggle using JavaScript
+            self.driver.execute_script("arguments[0].click();", files_toggle)
+            print("files toggle clicked")
 
-        print("Waiting for modal-backdrop fade to disappear...")
-        # Wait for the modal-backdrop fade to disappear
-        self.wait.until(
-            EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop"))
-        )
-        print("Modal-backdrop fade disappeared.")
+            # Click on "Add files"
+            add_files_link = self.driver.find_element(By.LINK_TEXT, "Add files")
+            self.driver.execute_script("arguments[0].click();", add_files_link)
+            print("files added")
 
+            # Find the input element for file upload
+            file_input = self.wait.until(
+                EC.presence_of_element_located((By.XPATH, "//input[@type='file']"))
+            )
+            print("input element for file upload found")
 
-        # Add an additional wait to make sure the modal fade element is no longer obscuring the home icon
-        print("Clicking on the 'plus' icon...")
-        self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, "glyphicon-plus"))
-        ).click()
-        print("Clicked on the 'plus' icon.")
-        time.sleep(1)
+            # Send the file path to the input element
+            file_input.send_keys(file_path)
+            print("file path sent to the input element")
 
-        print("Clicking on 'Files' toggle...")
-        self.wait.until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.files-toggle"))
-        ).click()
-        print("Clicked on 'Files' toggle.")
-
-        print("Clicking on 'Add files' link...")
-        driver.find_element(By.LINK_TEXT, "Add files").click()
-        print("Clicked on 'Add files' link.")
-
-        print("Uploading file...")
-        driver.find_element(By.XPATH, "//input[@type='file']").send_keys(
-            f"{self.file_path}"
-        )
-        print("File uploaded.")
-
-        print("Clicking on 'OK' button...")
-        self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
-        ).click()
-        print("Clicked on 'OK' button.")
+            # Click on OK
+            self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//button[text()='OK']"))
+            ).click()
         
-        driver.back()
+            self.driver.back()
+            print("Successfully navigated back")
 
     def create_forbidden_tile(self, tile_name, tile_description):
         self.wait.until(
@@ -602,7 +591,7 @@ if __name__ == "__main__":
             "The Benefits of Mindfulness Meditation",
             "Mindfulness meditation is a practice that involves focusing your attention on the present moment, without judgment. It has been shown to have numerous benefits for both physical and mental health.",
         )
-        bot.add_file()
+        bot.add_file(file_path)
         bot.create_room(
             "The Benefits of Creative Expression",
             "Creative expression is an amazing way to explore our inner selves and share our unique perspectives with the world. Whether it’s through art, music, writing, or other forms of creativity, expressing ourselves creatively can have numerous benefits for our mental health and well-being.",

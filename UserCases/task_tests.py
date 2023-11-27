@@ -298,15 +298,33 @@ class Task_tests:
             )
 
     def write_comment(self):
-        driver.find_element(By.CSS_SELECTOR, "[data-toggle='comments']").click()
-        driver.implicitly_wait(3)
-        driver.find_element(By.CLASS_NAME, "emoji-wysiwyg-editor").send_keys(
-            self.comment_content
+        comments_toggle = WebDriverWait(driver, 60).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-toggle='comments']"))
         )
+        comments_toggle.click()
+
+        emoji_editor = WebDriverWait(driver, 60).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "emoji-wysiwyg-editor"))
+        )
+        emoji_editor.send_keys(self.comment_content)
         # Add an emoticon
-        driver.find_element(By.ID, "dropEmoticons").click()
-        driver.find_element(By.XPATH, "//img[@alt='Love it']").click()
-        driver.find_element(By.CLASS_NAME, "btn-primary").click()
+        emoticon_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "dropEmoticons"))
+        )
+        emoticon_button.click()
+
+        love_emoticon = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//img[@alt='Love it']"))
+        )
+        love_emoticon.click()
+
+        # Click the 'Post' button
+        post_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, "btn-primary"))
+        )
+        post_button.click()
+
+        print("Wrote a comment with emoticon")
 
     def check_side_bar(self):
         driver.find_element(By.CLASS_NAME, "task-content").click()
