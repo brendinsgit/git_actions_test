@@ -173,6 +173,13 @@ class Searchbar_test:
             checkbox = self.wait.until(
                 EC.element_to_be_clickable((By.NAME, f"data[{checkbox_name}]"))
             )
+
+            # Scroll the checkbox into view
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", checkbox)
+
+            # Add a short wait before clicking the checkbox
+            time.sleep(1)
+
             checkbox.click()
             print(f"Clicked checkbox: {checkbox_name}")
 
