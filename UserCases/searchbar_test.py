@@ -107,13 +107,53 @@ class Searchbar_test:
         )
 
         # Click on tasks tab
-        driver.find_element(By.CSS_SELECTOR, "div[data-toggle='tasks']").click()
-        console_logs = driver.execute_script("return window.console.logs;")
-        print("JavaScript Console Logs:", console_logs)
+        tasks_tab = self.wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-toggle='tasks']"))
+        )
+        tasks_tab.click()
+        print("Clicked on tasks tab")
 
         # Click on "Add new task"
-        add_new_task_button = self.wait.until(EC.presence_of_element_located((By.LINK_TEXT, "Add new task")))
-        driver.execute_script("arguments[0].click();", add_new_task_button)
+        add_new_task_button = self.wait.until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Add new task"))
+        )
+        add_new_task_button.click()
+        print("Clicked on 'Add new task' button")
+
+        # Set the name
+        task_name_input = self.wait.until(
+            EC.element_to_be_clickable((By.ID, "data-name"))
+        )
+        task_name_input.send_keys(task_name)
+        print(f"Entered task name: {task_name}")
+
+        # Find the select element
+        select_element = self.wait.until(
+            EC.presence_of_element_located((By.ID, "data-priority"))
+        )
+
+        # Create a Select object
+        select_object = Select(select_element)
+
+        # Select the "High" option
+        select_object.select_by_visible_text("High")
+        print("Selected priority: High")
+
+        # Click all 3 checkboxes
+        for checkbox_name in ["requires_acknowledge", "requires_approve", "requires_review"]:
+            checkbox = self.wait.until(
+                EC.element_to_be_clickable((By.NAME, f"data[{checkbox_name}]"))
+            )
+            checkbox.click()
+            print(f"Clicked checkbox: {checkbox_name}")
+
+        
+        # Click on add task
+        add_task_button = self.wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='Add task']"))
+        )
+        add_task_button.click()
+        print("Clicked on 'Add task' button")
 
         console_logs = driver.execute_script("return window.console.logs;")
         print("JavaScript Console Logs:", console_logs)

@@ -55,6 +55,9 @@
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Run search bar test
+        run: python UserCases/searchbar_test.py
+
       - name: Run flow create
         run: python UserCases/flow_create.py
 
