@@ -51,14 +51,9 @@
           
       - name: Install Dependencies
         run: pip install -r requirements.txt
-
+      
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # for testing this is a duplicate so don't forget to remove after
-      - name: Run subway temp test
-        run: python UserCases/subway_temp_test.py
-
 
       - name: Run flow create
         run: python UserCases/flow_create.py
@@ -72,20 +67,22 @@
       - name: Run search bar test
         run: python UserCases/searchbar_test.py
 
-      - name: Run sidebar temp test
-        run: python UserCases/sidebar_temp_test.py
+      #after further communication with the maker of these tests, we came to a conclusion that these testa are not required to test rooms3 templates
+      # - name: Run sidebar temp test
+      #   run: python UserCases/sidebar_temp_test.py
 
-      - name: Run subway temp test
-        run: python UserCases/subway_temp_test.py
+      # - name: Run subway temp test
+      #   run: python UserCases/subway_temp_test.py
 
-      - name: Run subway two temp test
-        run: python UserCases/subwaytwo_temp_test.py
+      # - name: Run subway two temp test
+      #   run: python UserCases/subwaytwo_temp_test.py
 
       - name: Run task tests
         run: python UserCases/task_tests.py
-
-      - name: Run tiles temp test
-        run: python UserCases/tiles_temp_test.py
+        
+      #after further communication with the maker of these tests, we came to a conclusion that these testa are not required to test rooms3 templates
+      # - name: Run tiles temp test
+      #   run: python UserCases/tiles_temp_test.py
 
       - name: Run view test
         run: python UserCases/view_test.py
@@ -99,9 +96,9 @@
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        id: create-issue
-      - run: 'echo Created issue number ${{ steps.create-issue.outputs.number }}'
-      - run: 'echo Created ${{ steps.create-issue.outputs.url }}'
+        id: create-issue-windows
+      - run: 'echo Created issue number ${{ steps.create-issue-windows.outputs.number }}'
+      - run: 'echo Created ${{ steps.create-issue-windows.outputs.url }}'
 
     
         
@@ -112,6 +109,7 @@
         # This workflow contains a single job called "run_tests_ubuntu"
           # The type of runner that the job will run on
           runs-on:  ubuntu-latest
+          needs: run_tests_windows  # This makes run_tests_ubuntu depend on run_tests_windows
 
           # Steps represent a sequence of tasks that will be executed as part of the job
           steps:
@@ -141,7 +139,7 @@
 
           - name: Run flow create
             run: python UserCases/flow_create.py
-            
+
           - name: Run publishing test
             run: python UserCases/publishing_test.py
 
@@ -151,20 +149,22 @@
           - name: Run search bar test
             run: python UserCases/searchbar_test.py
 
-          - name: Run sidebar temp test
-            run: python UserCases/sidebar_temp_test.py
+          #after further communication with the maker of these tests, we came to a conclusion that these testa are not required to test rooms3 templates
+          # - name: Run sidebar temp test
+          #   run: python UserCases/sidebar_temp_test.py
 
-          - name: Run subway temp test
-            run: python UserCases/subway_temp_test.py
+          # - name: Run subway temp test
+          #   run: python UserCases/subway_temp_test.py
 
-          - name: Run subway two temp test
-            run: python UserCases/subwaytwo_temp_test.py
+          # - name: Run subway two temp test
+          #   run: python UserCases/subwaytwo_temp_test.py
 
           - name: Run task tests
             run: python UserCases/task_tests.py
-
-          - name: Run tiles temp test
-            run: python UserCases/tiles_temp_test.py
+            
+          #after further communication with the maker of these tests, we came to a conclusion that these testa are not required to test rooms3 templates
+          # - name: Run tiles temp test
+          #   run: python UserCases/tiles_temp_test.py
 
           - name: Run view test
             run: python UserCases/view_test.py
@@ -173,11 +173,70 @@
             uses: actions/upload-pages-artifact@v1
             with: 
               path: './artifacts'
-         
+          
           - name: Create GitHub Issue
             uses: JasonEtco/create-an-issue@v2
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            id: create-issue
-          - run: 'echo Created issue number ${{ steps.create-issue.outputs.number }}'
-          - run: 'echo Created ${{ steps.create-issue.outputs.url }}'
+            id: create-issue-ubuntu
+          - run: 'echo Created issue number ${{ steps.create-issue-ubuntu.outputs.number }}'
+          - run: 'echo Created ${{ steps.create-issue-ubuntu.outputs.url }}'
+          
+    run_tests_macos:
+            runs-on: macos-latest
+            needs: [run_tests_windows, run_tests_ubuntu]
+        
+            steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+              
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.x'
+                cache: 'pip'
+                
+            - name: Directory check
+              run: pwd
+        
+            - name: Install Chrome on macOS
+              run: |
+                brew install --cask google-chrome
+        
+            - name: Install Dependencies
+              run: pip install -r requirements.txt
+        
+            - name: Checkout code
+              uses: actions/checkout@v3
+        
+            - name: Run flow create
+              run: python UserCases/flow_create.py
+        
+            - name: Run publishing test
+              run: python UserCases/publishing_test.py
+        
+            - name: Run room fill test
+              run: python UserCases/room_fill_test.py
+        
+            - name: Run search bar test
+              run: python UserCases/searchbar_test.py
+        
+            - name: Run task tests
+              run: python UserCases/task_tests.py
+        
+            - name: Run view test
+              run: python UserCases/view_test.py
+        
+            - name: upload artifact
+              uses: actions/upload-artifact@v2
+              with: 
+                name: 'macos-artifacts'
+                path: './artifacts'
+              
+            - name: Create GitHub Issue
+              uses: JasonEtco/create-an-issue@v2
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              id: create-issue-macos
+            - run: 'echo Created issue number ${{ steps.create-issue-macos.outputs.number }}'
+            - run: 'echo Created ${{ steps.create-issue-macos.outputs.url }}'
