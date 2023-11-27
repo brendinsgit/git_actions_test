@@ -76,21 +76,38 @@ class Searchbar_test:
         self.driver.get("https://r3qa-3.qarooms3.kenja.com/")
         self.driver.maximize_window()
         self.driver.execute_script("document.body.style.zoom='100%'")
-        # Enter email address and password
-        self.driver.find_element(By.ID, "login-input-email").send_keys(
-            self.email_address
-        )
-        self.driver.find_element(By.ID, "login-input-password").send_keys(self.password)
 
-        # Click login button
-        self.driver.find_element(By.CSS_SELECTOR, ".btn-block").click()
-
-        # Wait for login to complete
-        self.wait.until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
+        try:
+            # Enter email address and password
+            email_input = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "login-input-email"))
             )
-        )
+            email_input.send_keys(self.email_address)
+
+            password_input = self.wait.until(
+                EC.element_to_be_clickable((By.ID, "login-input-password"))
+            )
+            password_input.send_keys(self.password)
+
+            # Click login button
+            login_button = self.wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".btn-block"))
+            )
+            login_button.click()
+
+            # Wait for login to complete
+            self.wait.until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, ".header-bottom-menu-add > .header-bottom-menu-item")
+                )
+            )
+            print("Login successful.")
+
+        except TimeoutException as e:
+            print(f"Timed out during login: {e.msg}")
+
+        except Exception as e:
+            print(f"An error occurred during login: {e}")
 
     def go_into_TESTdpt(self):
         self.wait.until(
