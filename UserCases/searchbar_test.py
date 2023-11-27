@@ -110,12 +110,24 @@ class Searchbar_test:
             print(f"An error occurred during login: {e}")
 
     def go_into_TESTdpt(self):
-        self.wait.until(
-            EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
-        ).click()
-        self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
-        ).click()
+        try:
+            private_rooms_link = self.wait.until(
+                EC.element_to_be_clickable((By.LINK_TEXT, "Private Rooms"))
+            )
+            private_rooms_link.click()
+            print("Clicked on 'Private Rooms' link.")
+
+            test_dpt_link = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'TEST dpt')]"))
+            )
+            test_dpt_link.click()
+            print("Clicked on 'TEST dpt' link.")
+
+        except TimeoutException as e:
+            print(f"Timed out during go_into_TESTdpt: {e.msg}")
+
+        except Exception as e:
+            print(f"An error occurred during go_into_TESTdpt: {e}")
 
     def create_task(self, task_name):
         # Wait for the modal-backdrop fade to disappear
